@@ -48,8 +48,9 @@ function loadLocations() {
         .then(response => response.json())
         .then(data => {
             locationsData = data.locations || [];
-            // Don't populate locations initially - wait for county selection
-            showCountyPrompt();
+            populateCountyDropdown(locationsData);
+            // Show all active locations on first load
+            filterLocations();
         })
         .catch(error => console.error('Error loading locations:', error));
 }
@@ -60,9 +61,9 @@ function populateLocations(list) {
     
     if (list.length === 0) {
         if (selectedCounty) {
-            listEl.innerHTML = '<div style="text-align: center; padding: 40px 20px; color: var(--muted);"><p>No locations found for the selected criteria.</p></div>';
+            listEl.innerHTML = '<div style="text-align: center; padding: 40px 20px; color: var(--muted);"><p>No active locations found for the selected criteria.</p></div>';
         } else {
-            showCountyPrompt();
+            listEl.innerHTML = '<div style="text-align: center; padding: 40px 20px; color: var(--muted);"><p>No active locations available.</p></div>';
         }
         return;
     }
@@ -191,13 +192,14 @@ function filterLocations() {
     
     let filtered = locationsData;
     
+    // Filter by active status first
+    filtered = filtered.filter(loc => loc.active !== false);
+    
     // Filter by county if selected
     if (selectedCounty) {
         filtered = filtered.filter(loc => loc.county === selectedCounty);
-    } else {
-        // If no county selected, show no locations
-        filtered = [];
     }
+    // If no county selected, show all active locations
     
     // Filter by search query
     if (searchQuery) {
@@ -257,4 +259,24 @@ function updateBranding(county) {
 function showCountyPrompt() {
     const listEl = document.getElementById('list');
     listEl.innerHTML = '<div style="text-align: center; padding: 40px 20px; color: var(--muted);"><p>Select a county above to view available locations.</p></div>';
+}
+
+function populateCountyDropdown(locations) {
+    const countySelect = document.getElementById('county-select');
+    
+    // Get unique counties and sort them
+    const counties = [...new Set(locations.map(loc => loc.county).filter(county => county))].sort();
+    
+    // Clear existing options except the first one
+    while (countySelect.options.length > 1) {
+        countySelect.remove(1);
+    }
+    
+    // Add county options
+    counties.forEach(county => {
+        const option = document.createElement('option');
+        option.value = county;
+        option.textContent = `${county} County`;
+        countySelect.appendChild(option);
+    });
 }

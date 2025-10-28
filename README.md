@@ -47,38 +47,95 @@ After pre-geocoding, the app will automatically use any `lat`/`lng` fields prese
 
 ## Usage
 
-- Open `index.html` in a web browser to view the map with food locations.
-- Locations are loaded from `locations.json`. You can edit this file to add, remove, or modify locations.
+- Open `index.html` in a web browser to view the map with all active food locations.
+- Use the county dropdown to filter locations by a specific county, or leave it as "All Counties" to view all locations.
+- The county dropdown is automatically populated with counties that have active locations in the database.
+- Use the search box to find locations by name or address.
+- Click on location markers or list items to view details and get directions.
 
 ## File Structure
 
-- `index.html`: Main HTML page
-- `styles.css`: CSS styles
+- `index.html`: Main HTML page with map and location list
+- `add-location.html`: Form for community members to submit new locations
+- `styles.css`: CSS styles for all pages
 - `script.js`: JavaScript for map initialization and location loading
+- `add-location.js`: Helper script for processing location submissions
+- `pregeocode.js`: Script for batch geocoding addresses
 - `locations.json`: JSON file containing location data
+- `.github/ISSUE_TEMPLATES/add-location.yml`: GitHub issue template for location submissions
 
 ## Adding Locations
 
+### For Users (Community Submissions)
+
+Anyone can submit new locations through our web form:
+
+1. Visit the "Add Location" page from the main site
+2. Fill out the location details form
+3. Generate the JSON data
+4. Copy the JSON and submit it as a [GitHub issue](https://github.com/therobbiedavis/Feeding-Foundation/issues/new/choose)
+
+A maintainer will review and add approved locations to the database.
+
+### For Maintainers
+
 Edit `locations.json` to add new locations. Each location should have:
 
-Additionally, you can add a `type` field to categorize locations (optional). Example types:
-- `food_bank`
-- `soup_kitchen`
-- `food_pantry`
-
-Example with `type`:
-
-Example:
 ```json
 {
-    "type": "food_bank",
-    "description": "Serves the local community."
-    "address": "123 Main St, Anytown, ST 12345",
-    "description": "Serves the local community."
+  "name": "Location Name",
+  "address": "Full street address, City, State, ZIP",
+  "county": "County Name",
+  "type": "Location Type",
+  "description": "Brief description",
+  "active": true,
+  "lat": null,
+  "lng": null
 }
 ```
 
-The site will automatically geocode the addresses to coordinates when loading.
+#### Using the Helper Script
+
+For processing community submissions from GitHub issues:
+
+```bash
+node add-location.js '{"name":"New Location","address":"123 Main St","county":"Coweta","type":"Food Bank","description":"Community food bank"}'
+```
+
+This will validate and add the location to `locations.json`.
+
+#### Required Fields:
+- `name`: Location name
+- `address`: Full address
+- `county`: County name
+- `type`: Location type
+
+#### Optional Fields:
+- `description`: Brief description
+- `active`: Boolean indicating if location is operational (default: true)
+- `lat`/`lng`: Coordinates (will be auto-geocoded if not provided)
+
+#### Location Types:
+- `Little Free Pantry`
+- `Food Bank`
+- `Soup Kitchen`
+- `Community Garden`
+- `Farmers Market`
+- `Other`
+
+#### Managing Inactive Locations
+
+To mark a location as inactive (e.g., if it closes), set the `active` field to `false`:
+
+```json
+{
+  "name": "Old Location",
+  "active": false,
+  ...
+}
+```
+
+Inactive locations will not appear on the map or in search results.
 
 ## Hosting
 

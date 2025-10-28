@@ -1,0 +1,35 @@
+---
+name: Add New Location
+about: Submit a new food resource location to be added to the database
+title: "Add New Location: [Location Name]"
+labels: location-submission
+assignees: ''
+---
+
+## Location Details
+
+**Please paste the JSON data generated from the Add Location form below:**
+
+```json
+{
+  "name": "",
+  "address": "",
+  "county": "",
+  "type": "",
+  "description": "",
+  "lat": null,
+  "lng": null
+}
+```
+
+## Additional Information
+
+- **Contact Information (optional):** If you'd like to be contacted about this submission, please provide your email or preferred contact method.
+- **Verification:** Have you visited this location or confirmed its details? (This helps us verify the accuracy of the information)
+
+## Notes for Maintainers
+
+- [ ] Verify location details and address accuracy
+- [ ] Geocode coordinates if needed
+- [ ] Add to locations.json
+- [ ] Test the location appears correctly on the map
