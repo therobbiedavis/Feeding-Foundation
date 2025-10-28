@@ -36,8 +36,8 @@ body{
 
 .layout{display:grid;grid-template-columns:340px 1fr;gap:24px;align-items:start;margin-top:16px}
 
-.sidebar{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;height:75vh;overflow:auto;border:1px solid rgba(0,0,0,0.05)}
-.sidebar-header{display:flex;flex-direction:column;gap:12px}
+.sidebar{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);height:75vh;overflow:auto;border:1px solid rgba(0,0,0,0.05)}
+.sidebar-header{display:flex;flex-direction:column;gap:12px;padding: 20px 20px 0;}
 .sidebar-header h3{margin:0;font-size:18px;font-weight:600;color:#052018}
 .sidebar-header select,.sidebar-header input{padding:12px 16px;border-radius:12px;border:1px solid #e6eef0;font-size:14px;transition:var(--transition);outline:none}
 .sidebar-header select:focus,.sidebar-header input:focus{border-color:var(--accent-3);box-shadow:0 0 0 3px rgba(59,191,154,0.1)}
@@ -87,7 +87,7 @@ body{
 /* small helpers */
 .btn{border-radius:10px;padding:10px 14px;border:0;font-weight:500;cursor:pointer}
 .btn.ghost{background:transparent}
-.sidebar-footer{margin-top:16px;text-align:center;color:var(--muted);font-size:13px}
+.sidebar-footer{padding:10px 0;text-align:center;color:var(--muted);font-size:13px}
 
 /* API error message */
 .api-error{position:relative;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid rgba(239,138,31,0.2);padding:24px;margin-top:16px;animation:fadeIn 0.3s ease}
