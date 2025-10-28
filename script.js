@@ -61,36 +61,58 @@ function populateLocations(list) {
         const item = makeListItem(location, idx);
         listEl.appendChild(item);
 
-        // start geocoding and keep a promise per index
-        const p = geocodeAddress(location.address)
-            .then(latLng => {
-                const marker = new google.maps.Marker({
-                    position: latLng,
-                    map: map,
-                    title: location.name
-                });
-                markers[idx] = marker;
-
-                const info = new google.maps.InfoWindow({
-                    content: `<h3>${location.name}</h3><p>${location.description || ''}</p><p><em>${location.address}</em></p>`
-                });
-                infoWindows[idx] = info;
-
-                marker.addListener('click', () => {
-                    closeAllInfoWindows();
-                    info.open(map, marker);
-                    highlightListItem(idx);
-                    // close sidebar on mobile
-                    document.getElementById('sidebar').classList.remove('open');
-                });
-
-                bounds.extend(latLng);
-            })
-            .catch(err => {
-                console.error('Geocode failed for', location.address, err);
-                markers[idx] = null;
-                infoWindows[idx] = null;
+        // Decide whether to use pre-geocoded coords or geocode the address
+        let geocodePromise;
+        if (location.lat != null && location.lng != null) {
+            // use provided coordinates
+            const latLng = new google.maps.LatLng(location.lat, location.lng);
+            geocodePromise = Promise.resolve(latLng);
+        } else {
+            // show loading indicator on the list item while geocoding
+            item.classList.add('loading');
+            geocodePromise = geocodeAddress(location.address).then(latLng => {
+                // remove loading indicator when we have a result
+                item.classList.remove('loading');
+                return latLng;
+            }).catch(err => {
+                item.classList.remove('loading');
+                item.classList.add('failed');
+                throw err;
             });
+        }
+
+        const p = geocodePromise.then(latLng => {
+            const marker = new google.maps.Marker({
+                position: latLng,
+                map: map,
+                title: location.name
+            });
+            markers[idx] = marker;
+
+            const dest = latLng.lat && latLng.lng ? `${latLng.lat()},${latLng.lng()}` : encodeURIComponent(location.address);
+            const directionsLink = `https://www.google.com/maps/dir/?api=1&destination=${dest}`;
+
+            const infoContent = `<h3>${escapeHtml(location.name)}</h3><p>${escapeHtml(location.description || '')}</p><p class="muted"><em>${escapeHtml(location.address || (location.lat+','+location.lng))}</em></p><p><a href="${directionsLink}" target="_blank" rel="noopener">Directions</a></p>`;
+
+            const info = new google.maps.InfoWindow({
+                content: infoContent
+            });
+            infoWindows[idx] = info;
+
+            marker.addListener('click', () => {
+                closeAllInfoWindows();
+                info.open(map, marker);
+                highlightListItem(idx);
+                // close sidebar on mobile
+                document.getElementById('sidebar').classList.remove('open');
+            });
+
+            bounds.extend(latLng);
+        }).catch(err => {
+            console.error('Geocode failed for', location.address, err);
+            markers[idx] = null;
+            infoWindows[idx] = null;
+        });
 
         geocodePromises[idx] = p;
     });
