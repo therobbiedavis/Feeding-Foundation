@@ -60,14 +60,19 @@ After pre-geocoding, the app will automatically use any `lat`/`lng` fields prese
 ## Adding Locations
 
 Edit `locations.json` to add new locations. Each location should have:
-- `name`: Name of the location
-- `address`: Full address (street, city, state, zip)
-- `description`: Optional description
+
+Additionally, you can add a `type` field to categorize locations (optional). Example types:
+- `food_bank`
+- `soup_kitchen`
+- `food_pantry`
+
+Example with `type`:
 
 Example:
 ```json
 {
-    "name": "New Food Bank",
+    "type": "food_bank",
+    "description": "Serves the local community."
     "address": "123 Main St, Anytown, ST 12345",
     "description": "Serves the local community."
 }

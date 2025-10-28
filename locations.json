@@ -1,0 +1,22 @@
+{
+    "locations": [
+        {
+            "name": "Downtown Food Bank",
+            "address": "123 Main St, New York, NY 10001",
+            "type": "food_bank",
+            "description": "Provides free meals and groceries to those in need."
+        },
+        {
+            "name": "Community Soup Kitchen",
+            "address": "456 Elm St, Los Angeles, CA 90001",
+            "type": "soup_kitchen",
+            "description": "Hot meals served daily."
+        },
+        {
+            "name": "Rural Food Pantry",
+            "address": "789 Oak Ave, Chicago, IL 60601",
+            "type": "food_pantry",
+            "description": "Emergency food assistance for families."
+        }
+    ]
+}
