@@ -88,3 +88,11 @@ body{
 .btn{border-radius:10px;padding:10px 14px;border:0;font-weight:500;cursor:pointer}
 .btn.ghost{background:transparent}
 .sidebar-footer{margin-top:16px;text-align:center;color:var(--muted);font-size:13px}
+
+/* API error message */
+.api-error{position:relative;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid rgba(239,138,31,0.2);padding:24px;margin-top:16px;animation:fadeIn 0.3s ease}
+.api-error.hidden{display:none}
+.error-content h3{margin:0 0 12px;font-size:18px;font-weight:600;color:#d97706}
+.error-content p{margin:8px 0;color:var(--muted)}
+.error-content ul{margin:12px 0;padding-left:20px;color:var(--muted)}
+.error-content li{margin:4px 0}

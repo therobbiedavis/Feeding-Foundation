@@ -4,12 +4,27 @@ A static website that displays food locations on a Google Map using data from a 
 
 ## Setup
 
+### For Production Deployment
+
 1. Obtain a Google Maps API key from the [Google Cloud Console](https://console.cloud.google.com/).
 2. Enable the Maps JavaScript API and Geocoding API for your project.
 3. In your GitHub repository settings, go to Secrets and Variables > Actions, and add a new repository secret named `GOOGLE_MAPS_API_KEY` with your API key as the value.
 4. Enable GitHub Pages in your repository settings (under Pages, set source to "GitHub Actions").
 
 The deployment workflow will automatically inject the API key and deploy the site.
+
+### For Local Development
+
+1. Obtain a Google Maps API key from the [Google Cloud Console](https://console.cloud.google.com/).
+2. Enable the Maps JavaScript API for your project.
+3. **Option A: Direct replacement**
+   - Open `index.html` and replace `YOUR_API_KEY` with your actual API key
+4. **Option B: Environment variable**
+   - Set the environment variable: `export GOOGLE_MAPS_API_KEY="your_actual_key"`
+   - Run: `sed -i "s/YOUR_API_KEY/$GOOGLE_MAPS_API_KEY/g" index.html`
+5. Open `index.html` in your web browser
+
+**⚠️ Important:** Never commit your API key to the repository. The placeholder `YOUR_API_KEY` in `index.html` is designed to be replaced during deployment.
 
 ## Pre-geocoding addresses (recommended)
 

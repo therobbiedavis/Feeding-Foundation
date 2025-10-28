@@ -6,44 +6,69 @@ let geocodePromises = [];
 let locationsData = [];
 let selectedCounty = '';
 
+// Fallback for when Google Maps API fails to load
+window.gm_authFailure = function() {
+    console.error('Google Maps API authentication failed');
+    showApiError();
+};
+
+// Fallback for when initMap is not called (script load failure)
+window.addEventListener('load', function() {
+    setTimeout(function() {
+        if (typeof google === 'undefined' || !map) {
+            console.warn('Google Maps API did not load properly');
+            showApiError();
+        }
+    }, 3000); // Give it 3 seconds to load
+});
+
 function initMap() {
-    // Initialize the map centered on a default location
-    map = new google.maps.Map(document.getElementById('map'), {
-        center: { lat: 39.8283, lng: -98.5795 }, // Center of USA
-        zoom: 4,
-        mapTypeControl: false
-    });
+    // Check if Google Maps API loaded successfully
+    if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
+        showApiError();
+        return;
+    }
 
-    // Initialize geocoder
-    geocoder = new google.maps.Geocoder();
+    try {
+        // Initialize the map centered on a default location
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: { lat: 39.8283, lng: -98.5795 }, // Center of USA
+            zoom: 4,
+            mapTypeControl: false
+        });
 
-    // Wire mobile toggle
-    document.getElementById('mobile-toggle').addEventListener('click', () => {
-        document.getElementById('sidebar').classList.toggle('open');
-    });
+        // Initialize geocoder
+        geocoder = new google.maps.Geocoder();
 
-    // Set current year
-    document.getElementById('year').textContent = new Date().getFullYear();
+        // Wire mobile toggle
+        document.getElementById('mobile-toggle').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('open');
+        });
 
-    // County selector
-    const countySelect = document.getElementById('county-select');
-    countySelect.addEventListener('change', () => {
-        selectedCounty = countySelect.value;
-        updateBranding(selectedCounty);
-        filterLocations();
-    });
+        // Set current year
+        document.getElementById('year').textContent = new Date().getFullYear();
 
-    // Search input
-    const searchInput = document.getElementById('search');
-    searchInput.addEventListener('input', () => {
-        filterLocations();
-    });
+        // County selector
+        const countySelect = document.getElementById('county-select');
+        countySelect.addEventListener('change', () => {
+            selectedCounty = countySelect.value;
+            updateBranding(selectedCounty);
+            filterLocations();
+        });
 
-    // Load locations from JSON
-    loadLocations();
-}
+        // Search input
+        const searchInput = document.getElementById('search');
+        searchInput.addEventListener('input', () => {
+            filterLocations();
+        });
 
-function loadLocations() {
+        // Load locations from JSON
+        loadLocations();
+    } catch (error) {
+        console.error('Error initializing map:', error);
+        showApiError();
+    }
+}function loadLocations() {
     fetch('locations.json')
         .then(response => response.json())
         .then(data => {
@@ -261,17 +286,52 @@ function showCountyPrompt() {
     listEl.innerHTML = '<div style="text-align: center; padding: 40px 20px; color: var(--muted);"><p>Select a county above to view available locations.</p></div>';
 }
 
+function showApiError() {
+    const errorEl = document.getElementById('api-error');
+    const mapEl = document.getElementById('map');
+    const listEl = document.getElementById('list');
+
+    // Show the error message
+    errorEl.classList.remove('hidden');
+
+    // Hide the map
+    mapEl.style.display = 'none';
+
+    // Update the locations list to indicate map is unavailable
+    listEl.innerHTML = '<div style="text-align: center; padding: 40px 20px; color: var(--muted);"><p>Map functionality is currently unavailable. You can still browse location details below.</p></div>';
+
+    // Still show locations in the list for accessibility
+    const activeLocations = locationsData.filter(loc => loc.active !== false);
+    if (activeLocations.length > 0) {
+        const listContainer = document.createElement('div');
+        listContainer.style.padding = '20px 0';
+        activeLocations.forEach(location => {
+            const item = document.createElement('div');
+            item.className = 'location-item';
+            item.innerHTML = `
+                <div class="location-name">${escapeHtml(location.name)}</div>
+                <div class="location-address">${escapeHtml(location.address)}</div>
+                <div style="margin-top: 8px; font-size: 14px; color: var(--muted);">
+                    ${escapeHtml(location.description || 'No description available')}
+                </div>
+            `;
+            listContainer.appendChild(item);
+        });
+        listEl.appendChild(listContainer);
+    }
+}
+
 function populateCountyDropdown(locations) {
     const countySelect = document.getElementById('county-select');
-    
+
     // Get unique counties and sort them
     const counties = [...new Set(locations.map(loc => loc.county).filter(county => county))].sort();
-    
+
     // Clear existing options except the first one
     while (countySelect.options.length > 1) {
         countySelect.remove(1);
     }
-    
+
     // Add county options
     counties.forEach(county => {
         const option = document.createElement('option');

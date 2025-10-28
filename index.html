@@ -51,6 +51,19 @@
         </aside>
 
         <section id="map" class="map" aria-label="Map showing locations"></section>
+        <div id="api-error" class="api-error hidden">
+            <div class="error-content">
+                <h3>Map Unavailable</h3>
+                <p>The Google Maps service is currently unavailable. This may be due to:</p>
+                <ul>
+                    <li>Missing or invalid API key</li>
+                    <li>Network connectivity issues</li>
+                    <li>API quota exceeded</li>
+                </ul>
+                <p>For local development, please follow the setup instructions in the README.md file.</p>
+                <p>You can still browse locations in the sidebar.</p>
+            </div>
+        </div>
     </main>
 
     <footer class="site-footer">
