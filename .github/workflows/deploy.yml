@@ -25,8 +25,17 @@ jobs:
         uses: actions/configure-pages@v4
 
       - name: Replace API key
+        env:
+          GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
         run: |
-          sed -i "s/YOUR_API_KEY/${{ secrets.GOOGLE_MAPS_API_KEY }}/g" index.html
+          # Fail early if the secret is not provided
+          if [ -z "$GOOGLE_MAPS_API_KEY" ]; then
+            echo "ERROR: GOOGLE_MAPS_API_KEY secret is not set." >&2
+            exit 1
+          fi
+
+          # Use perl to safely replace the placeholder with the secret (handles special chars)
+          perl -0777 -pe 's/YOUR_API_KEY/$ENV{"GOOGLE_MAPS_API_KEY"}/g' -i index.html
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
