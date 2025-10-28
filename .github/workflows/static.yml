@@ -1,8 +1,0 @@
-name: Deploy static content to Pages (disabled)
-
-# Disabled: this workflow was superseded by `deploy.yml` which injects the
-# Google Maps API key from repository secrets before publishing. Keeping this
-# file here as a disabled placeholder to avoid accidental runs.
-
-on: []
-
