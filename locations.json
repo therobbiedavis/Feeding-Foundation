@@ -1,19 +1,19 @@
 {
     "locations": [
         {
-            "name": "Downtown Food Bank",
-            "address": "123 Main St, New York, NY 10001",
-            "type": "food_bank",
+            "name": "Franklin Road Flea Market",
+            "address": "54 Franklin Rd, Newnan, GA 30263, United States",
+            "type": "Blessing Box",
             "description": "Provides free meals and groceries to those in need."
         },
         {
-            "name": "Community Soup Kitchen",
+            "name": "example sCommunity Soup Kitchen",
             "address": "456 Elm St, Los Angeles, CA 90001",
             "type": "soup_kitchen",
             "description": "Hot meals served daily."
         },
         {
-            "name": "Rural Food Pantry",
+            "name": "example Rural Food Pantry",
             "address": "789 Oak Ave, Chicago, IL 60601",
             "type": "food_pantry",
             "description": "Emergency food assistance for families."

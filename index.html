@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feeding Foundation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <div class="brand">
+                <img src="imgs/icon-min.png" alt="Feeding Foundation logo" class="logo-img">
+                <div>
+                    <h1 class="site-title">Feeding Foundation</h1>
+                    <p class="tagline">Connecting communities with food resources</p>
+                </div>
+            </div>
+            <nav class="header-actions">
+                <button id="mobile-toggle" class="btn ghost">Locations</button>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container hero-inner">
+            <h2>Find local food resources near you</h2>
+            <p>Search and explore community food banks, soup kitchens, and pantries. Click a location to see details and directions.</p>
+        </div>
+    </section>
+
+    <main class="container layout">
+        <aside id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <h3>Locations</h3>
+                <input id="search" type="search" placeholder="Search by name or city" aria-label="Search locations">
+            </div>
+            <div id="list" class="locations-list">
+                <!-- location items injected here -->
+            </div>
+            <footer class="sidebar-footer">
+                <small>Data from Feeding Foundation</small>
+            </footer>
+        </aside>
+
+        <section id="map" class="map" aria-label="Map showing locations"></section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">© <span id="year"></span> Feeding Foundation — Built for community impact</div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"></script>
+</body>
+</html>
