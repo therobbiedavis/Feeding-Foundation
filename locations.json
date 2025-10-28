@@ -3,6 +3,7 @@
     {
       "name": "Franklin Road Flea Market",
       "address": "54 Franklin Rd, Newnan, GA 30263",
+      "county": "Coweta",
       "type": "Little Free Pantry",
       "description": "Take what you need, leave what you can.",
       "lat": 33.3854297,
@@ -11,6 +12,7 @@
     {
       "name": "Coweta County Jail Parking Lot",
       "address": "560 Greison Trail Newnan GA 30263",
+      "county": "Coweta",
       "type": "Little Free Pantry",
       "description": "Take what you need, leave what you can.",
       "lat": 33.3818052,
@@ -19,6 +21,7 @@
     {
       "name": "Lovejoy Church",
       "address": "60 E Washington St Newnan, GA 30263",
+      "county": "Coweta",
       "type": "Little Free Pantry",
       "description": "Take what you need, leave what you can.",
       "lat": 33.3750636,
@@ -27,6 +30,7 @@
     {
       "name": "Behind Higgins Hillcrest Chapel",
       "address": "26-2 Sutherland Dr, Newnan, GA 30263",
+      "county": "Coweta",
       "type": "Little Free Pantry",
       "description": "Take what you need, leave what you can.",
       "lat": 33.3813419,
@@ -35,6 +39,7 @@
     {
       "name": "Mt Carmel UMC Newnan",
       "address": "958 Summers McKoy Road, Newnan, GA 30263",
+      "county": "Coweta",
       "type": "Little Free Pantry",
       "description": "Take what you need, leave what you can.",
       "lat": 33.4057761,
@@ -43,6 +48,7 @@
     {
       "name": "Newnan Chapel UMC",
       "address": "72 Robinson St Newnan, GA 30263 ",
+      "county": "Coweta",
       "type": "Little Free Pantry",
       "description": "Take what you need, leave what you can.",
       "lat": 33.3677075,
@@ -51,6 +57,7 @@
     {
       "name": "Fellowship Baptist Chapel",
       "address": "1188 Tommy Lee Cook Rd, Palmetto, GA 30268",
+      "county": "Coweta",
       "type": "Little Free Pantry",
       "description": "Take what you need, leave what you can.",
       "lat": 33.5047542,
@@ -59,6 +66,7 @@
     {
       "name": "Resurrection Lutheran Church",
       "address": "1250 Lora Smith Rd, Newnan, GA 30265",
+      "county": "Coweta",
       "type": "Little Free Pantry",
       "description": "Take what you need, leave what you can.",
       "lat": 33.4059494,
@@ -67,6 +75,7 @@
     {
       "name": "Oak Lawn Baptist Church",
       "address": "482 Pine Rd, Newnan, GA 30263",
+      "county": "Coweta",
       "type": "Little Free Pantry",
       "description": "Take what you need, leave what you can.",
       "lat": 33.3329027,
@@ -75,6 +84,7 @@
     {
       "name": "Bethlehem Baptist Church",
       "address": "2194 W Grantville Rd, Newnan, GA 30263",
+      "county": "Coweta",
       "type": "Little Free Pantry",
       "description": "Take what you need, leave what you can.",
       "lat": 33.2919971,
@@ -83,6 +93,7 @@
     {
       "name": "Whitely Farms",
       "address": "901 Bob Smith Rd, Sharpsburg, GA 30277",
+      "county": "Coweta",
       "type": "Little Free Pantry",
       "description": "Take what you need, leave what you can.",
       "lat": 33.3719911,
@@ -91,6 +102,7 @@
     {
       "name": "Coweta County Department of Family and Children Services",
       "address": "533 Highway 29 North Newnan GA 30263",
+      "county": "Coweta",
       "type": "Little Free Pantry",
       "description": "Take what you need, leave what you can.",
       "lat": 33.4006556,
@@ -99,6 +111,7 @@
     {
       "name": "Moreland UMC",
       "address": "16 Church St, Moreland, GA 30259",
+      "county": "Coweta",
       "type": "Little Free Pantry",
       "description": "Take what you need, leave what you can.",
       "lat": 33.2863525,
@@ -107,6 +120,7 @@
     {
       "name": "Senoia United Methodist Church",
       "address": "229 Bridge St, Senoia, GA 30276",
+      "county": "Coweta",
       "type": "Little Free Pantry",
       "description": "Take what you need, leave what you can.",
       "lat": 33.3004662,
@@ -115,6 +129,7 @@
     {
       "name": "Rutledge Center Inc",
       "address": "61 Hospital Rd, Newnan, GA 30263",
+      "county": "Coweta",
       "type": "Little Free Pantry",
       "description": "Take what you need, leave what you can.",
       "lat": 33.3945026,

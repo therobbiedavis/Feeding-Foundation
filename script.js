@@ -4,6 +4,7 @@ let markers = [];
 let infoWindows = [];
 let geocodePromises = [];
 let locationsData = [];
+let selectedCounty = '';
 
 function initMap() {
     // Initialize the map centered on a default location
@@ -24,11 +25,18 @@ function initMap() {
     // Set current year
     document.getElementById('year').textContent = new Date().getFullYear();
 
+    // County selector
+    const countySelect = document.getElementById('county-select');
+    countySelect.addEventListener('change', () => {
+        selectedCounty = countySelect.value;
+        updateBranding(selectedCounty);
+        filterLocations();
+    });
+
     // Search input
     const searchInput = document.getElementById('search');
     searchInput.addEventListener('input', () => {
-        const q = searchInput.value.trim().toLowerCase();
-        filterLocations(q);
+        filterLocations();
     });
 
     // Load locations from JSON
@@ -40,8 +48,8 @@ function loadLocations() {
         .then(response => response.json())
         .then(data => {
             locationsData = data.locations || [];
-            clearMarkers();
-            populateLocations(locationsData);
+            // Don't populate locations initially - wait for county selection
+            showCountyPrompt();
         })
         .catch(error => console.error('Error loading locations:', error));
 }
@@ -49,6 +57,16 @@ function loadLocations() {
 function populateLocations(list) {
     const listEl = document.getElementById('list');
     listEl.innerHTML = '';
+    
+    if (list.length === 0) {
+        if (selectedCounty) {
+            listEl.innerHTML = '<div style="text-align: center; padding: 40px 20px; color: var(--muted);"><p>No locations found for the selected criteria.</p></div>';
+        } else {
+            showCountyPrompt();
+        }
+        return;
+    }
+    
     const bounds = new google.maps.LatLngBounds();
 
     // reset arrays
@@ -168,19 +186,28 @@ function highlightListItem(idx) {
     if (el) el.classList.add('active');
 }
 
-function filterLocations(query) {
-    const lower = query.toLowerCase();
-    const listEl = document.getElementById('list');
-    listEl.innerHTML = '';
-    // hide all markers
-    markers.forEach(m => m.setMap(null));
-    markers = [];
-    infoWindows = [];
-
-    const filtered = locationsData.filter(loc => {
-        return loc.name.toLowerCase().includes(lower) || (loc.address && loc.address.toLowerCase().includes(lower));
-    });
-
+function filterLocations() {
+    const searchQuery = document.getElementById('search').value.trim().toLowerCase();
+    
+    let filtered = locationsData;
+    
+    // Filter by county if selected
+    if (selectedCounty) {
+        filtered = filtered.filter(loc => loc.county === selectedCounty);
+    } else {
+        // If no county selected, show no locations
+        filtered = [];
+    }
+    
+    // Filter by search query
+    if (searchQuery) {
+        filtered = filtered.filter(loc => {
+            return loc.name.toLowerCase().includes(searchQuery) || 
+                   (loc.address && loc.address.toLowerCase().includes(searchQuery));
+        });
+    }
+    
+    clearMarkers();
     populateLocations(filtered);
 }
 
@@ -209,4 +236,25 @@ function clearMarkers() {
 function escapeHtml(str){
     if(!str) return '';
     return String(str).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
+}
+
+function updateBranding(county) {
+    const titleEl = document.querySelector('.site-title');
+    const taglineEl = document.querySelector('.tagline');
+    const heroTitleEl = document.querySelector('.hero-inner h2');
+    
+    if (county) {
+        titleEl.textContent = `${county} County Chapter`;
+        taglineEl.textContent = `Feeding Foundation - ${county} County`;
+        heroTitleEl.textContent = `Find local food resources in ${county} County`;
+    } else {
+        titleEl.textContent = 'Feeding Foundation';
+        taglineEl.textContent = 'Connecting communities with food resources';
+        heroTitleEl.textContent = 'Find local food resources near you';
+    }
+}
+
+function showCountyPrompt() {
+    const listEl = document.getElementById('list');
+    listEl.innerHTML = '<div style="text-align: center; padding: 40px 20px; color: var(--muted);"><p>Select a county above to view available locations.</p></div>';
 }
