@@ -85,8 +85,32 @@ sed -i "s/YOUR_API_KEY/$GOOGLE_MAPS_API_KEY/g" index.html
 
 We prefer pre-geocoding addresses and storing `lat`/`lng` in `locations.json` to reduce runtime calls and avoid quota issues.
 
-- Use `pregeocode.js` to batch-geocode addresses with Google Geocoding API or Nominatim for testing.
-- Always keep API keys out of source control.
+### Running the Pre-geocoding Script
+
+Use `pregeocode.js` to batch-geocode addresses before committing location changes:
+
+```bash
+# Option 1: Using Google Geocoding API (recommended for production)
+# Set your Google Maps API key as an environment variable
+export GOOGLE_MAPS_API_KEY="your_api_key_here"
+node pregeocode.js --write
+
+# Option 2: Using OpenStreetMap Nominatim (free, rate-limited)
+# Good for testing, but check Nominatim usage policies
+node pregeocode.js --use-nominatim --write
+```
+
+**What it does:**
+- Reads `locations.json` and identifies locations without `lat`/`lng` coordinates
+- Geocodes missing addresses using Google Maps API or Nominatim
+- Writes results to `locations.pregeo.json` first for review
+- With `--write` flag, overwrites `locations.json` with geocoded coordinates
+
+**Notes:**
+- Google Maps API requires an API key (keep it secret, never commit to repo)
+- Nominatim is free but has strict rate limits (1 request/second) and usage policies
+- Always review `locations.pregeo.json` before using `--write`
+- Geocoding failures are logged but don't stop the process
 
 ## Licensing & Code of Conduct
 

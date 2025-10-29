@@ -156,7 +156,9 @@
       "county": "Coweta",
       "type": "Food Distribution",
       "description": "Offers food distribution on Wednesdays at 4:30 p.m. and Saturdays at 8 a.m. They also provide home delivery for residents who are shut-in or lack transportation.",
-      "schedule": "Wednesdays 4:30 PM, Saturdays 8:00 AM"
+      "schedule": "Wednesdays 4:30 PM, Saturdays 8:00 AM",
+      "lat": 33.3725304,
+      "lng": -84.80289189999999
     },
     {
       "name": "Coweta Community Food Pantry (One Roof Outreach)",
@@ -164,7 +166,9 @@
       "county": "Coweta",
       "type": "Food Pantry",
       "description": "Open on Mondays, Wednesdays, and Fridays from 1–4 p.m. Patrons can pick up food boxes twice a month.",
-      "schedule": "Mondays, Wednesdays, Fridays 1:00 PM - 4:00 PM"
+      "schedule": "Mondays, Wednesdays, Fridays 1:00 PM - 4:00 PM",
+      "lat": 33.3854552,
+      "lng": -84.8170602
     },
     {
       "name": "First Baptist Church (A.O. Mission Center)",
@@ -172,7 +176,9 @@
       "county": "Coweta",
       "type": "Food Pantry",
       "description": "Provides food assistance on Mondays, Tuesdays, and Wednesdays from 9–11 a.m.",
-      "schedule": "Mondays, Tuesdays, Wednesdays 9:00 AM - 11:00 AM"
+      "schedule": "Mondays, Tuesdays, Wednesdays 9:00 AM - 11:00 AM",
+      "lat": 33.375343,
+      "lng": -84.8009176
     },
     {
       "name": "The Salvation Army Newnan Service Center",
@@ -180,7 +186,9 @@
       "county": "Coweta",
       "type": "Food Pantry",
       "description": "Hosts a food pantry on Tuesdays and Thursdays from 9:30 a.m. to 12 p.m. A photo ID and completed paperwork are required.",
-      "schedule": "Tuesdays, Thursdays 9:30 AM - 12:00 PM"
+      "schedule": "Tuesdays, Thursdays 9:30 AM - 12:00 PM",
+      "lat": 33.3919416,
+      "lng": -84.7802667
     },
     {
       "name": "The I-58 Mission",
@@ -188,7 +196,9 @@
       "county": "Coweta",
       "type": "Food Distribution",
       "description": "Distributes food on Thursdays from 9:30 a.m. to 2:30 p.m.",
-      "schedule": "Thursdays 9:30 AM - 2:30 PM"
+      "schedule": "Thursdays 9:30 AM - 2:30 PM",
+      "lat": 33.3004769,
+      "lng": -84.5383891
     },
     {
       "name": "Yeager Road Community Resource Center",
@@ -196,7 +206,9 @@
       "county": "Coweta",
       "type": "Mobile Food Pantry",
       "description": "Offers a mobile food pantry on the first Saturday of each month.",
-      "schedule": "First Saturday of each month"
+      "schedule": "First Saturday of each month",
+      "lat": 33.3513928,
+      "lng": -84.7401086
     },
     {
       "name": "Newnan City Police Department Little Free Pantry",
@@ -204,7 +216,9 @@
       "county": "Coweta",
       "type": "Little Free Pantry",
       "description": "Free 24-hour little pantry available for emergency needs.",
-      "schedule": "24/7 access"
+      "schedule": "24/7 access",
+      "lat": 33.3806716,
+      "lng": -84.79965729999999
     },
     {
       "name": "Crossroads Church Little Free Pantry",
@@ -212,7 +226,9 @@
       "county": "Coweta",
       "type": "Little Free Pantry",
       "description": "Free 24-hour little pantry available for emergency needs.",
-      "schedule": "24/7 access"
+      "schedule": "24/7 access",
+      "lat": 33.4007667,
+      "lng": -84.6841948
     }
   ]
 }
