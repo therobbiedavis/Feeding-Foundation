@@ -1,51 +1,64 @@
----
 name: Add New Location
-about: Submit a new food resource location to be added to the database
+description: Submit a new food resource location to be added to the database
 title: "Add New Location: [Location Name]"
-labels: location-submission
-assignees: ''
----
+labels: [location-submission]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Submit a New Food Resource Location
+        
+        Thank you for helping expand our community food resources database! Please use the [Add Location form](https://therobbiedavis.github.io/Feeding-Foundation/add-location.html) to generate the JSON data, then paste it below.
 
-## Location Details
+  - type: textarea
+    id: location-json
+    attributes:
+      label: Location JSON Data
+      description: Paste the JSON data generated from the Add Location form
+      placeholder: |
+        {
+          "name": "Community Food Pantry",
+          "address": "123 Main St, Newnan, GA 30263",
+          "county": "Coweta",
+          "type": "Food Bank",
+          "description": "Open Tuesdays and Thursdays 9am-5pm",
+          "active": true,
+          "lat": null,
+          "lng": null
+        }
+      render: json
+    validations:
+      required: true
 
-**Please paste the JSON data generated from the Add Location form below:**
+  - type: input
+    id: contact
+    attributes:
+      label: Contact Information (Optional)
+      description: If you'd like to be contacted about this submission, please provide your email or preferred contact method
+      placeholder: email@example.com
 
-```json
-{
-  "name": "",
-  "address": "",
-  ---
-  name: Add New Location
-  description: Submit a new food resource location to be added to the database
-  title: "Add New Location: [Location Name]"
-  labels: location-submission
-  # leave assignees out or provide a string/array. Omit to avoid validation errors
-  ---
+  - type: checkboxes
+    id: verification
+    attributes:
+      label: Verification
+      description: Please confirm the following
+      options:
+        - label: I have verified this location exists and the information is accurate
+          required: true
+        - label: I have visited this location or confirmed its details through reliable sources
+          required: false
 
-  ## Location Details
-
-  **Please paste the JSON data generated from the Add Location form below:**
-
-  ```json
-  {
-    "name": "",
-    "address": "",
-    "county": "",
-    "type": "",
-    "description": "",
-    "lat": null,
-    "lng": null
-  }
-  ```
-
-  ## Additional Information
-
-  - **Contact Information (optional):** If you'd like to be contacted about this submission, please provide your email or preferred contact method.
-  - **Verification:** Have you visited this location or confirmed its details? (This helps us verify the accuracy of the information)
-
-  ## Notes for Maintainers
-
-  - [ ] Verify location details and address accuracy
-  - [ ] Geocode coordinates if needed
-  - [ ] Add to locations.json
-  - [ ] Test the location appears correctly on the map
+  - type: markdown
+    attributes:
+      value: |
+        ## For Maintainers
+        
+        After reviewing this submission:
+        - [ ] Verify location details and address accuracy
+        - [ ] Geocode coordinates if needed (run `node pregeocode.js --write`)
+        - [ ] Add to locations.json using the helper script:
+          ```bash
+          node add-location.js '<paste-json-here>'
+          ```
+        - [ ] Test the location appears correctly on the map
+        - [ ] Close this issue once added
