@@ -165,6 +165,7 @@ function populateLocations(list) {
                 <h3>${escapeHtml(location.name)}</h3>
                 <p><strong>${escapeHtml(location.type)}</strong></p>
                 <p>${escapeHtml(location.description || '')}</p>
+                ${location.schedule ? `<p><em>${escapeHtml(location.schedule)}</em></p>` : ''}
                 <p class="muted"><em>${escapeHtml(location.address || (location.lat+','+location.lng))}</em></p>
                 <p><a href="${directionsLink}" target="_blank" rel="noopener">Directions</a></p>
                 <p><a href="https://github.com/therobbiedavis/Feeding-Foundation/issues/new?template=report-inactive.yml&title=${encodeURIComponent('Report Inactive: ' + location.name)}&location-json=${locationJson}" target="_blank" rel="noopener">Report inactive / closed</a></p>
@@ -208,6 +209,7 @@ function makeListItem(location, idx) {
         <div class="location-name">${escapeHtml(location.name)}</div>
         <div class="location-type" style="font-size: 13px; color: var(--accent-3); font-weight: 600; margin-bottom: 4px;">${escapeHtml(location.type)}</div>
         <div class="location-address">${escapeHtml(location.address)}</div>
+        ${location.schedule ? `<div style="font-size: 13px; color: var(--muted); margin: 4px 0; font-style: italic;">${escapeHtml(location.schedule)}</div>` : ''}
         <div style="margin-top:8px;font-size:13px;">
             <a href="https://github.com/therobbiedavis/Feeding-Foundation/issues/new?template=report-inactive.yml&title=${encodeURIComponent('Report Inactive: ' + location.name)}&location-json=${locationJson}" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600;">Report inactive</a>
         </div>
@@ -309,6 +311,133 @@ function escapeHtml(str){
     return String(str).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
 }
 
+// Schedule parsing and "open now" functionality
+function parseSchedule(scheduleText) {
+    if (!scheduleText || typeof scheduleText !== 'string') {
+        return null;
+    }
+
+    const text = scheduleText.toLowerCase().trim();
+
+    // Handle 24/7 locations
+    if (text.includes('24/7') || text.includes('24 hours') || text.includes('always open')) {
+        return { type: 'always' };
+    }
+
+    // Handle "by appointment" or similar
+    if (text.includes('appointment') || text.includes('call first') || text.includes('contact')) {
+        return { type: 'appointment' };
+    }
+
+    // Try to parse day and time information
+    const schedule = { type: 'scheduled', days: [], times: [] };
+
+    // Common day patterns
+    const dayPatterns = {
+        'monday': ['monday', 'mon'],
+        'tuesday': ['tuesday', 'tues', 'tue'],
+        'wednesday': ['wednesday', 'wed'],
+        'thursday': ['thursday', 'thurs', 'thu'],
+        'friday': ['friday', 'fri'],
+        'saturday': ['saturday', 'sat'],
+        'sunday': ['sunday', 'sun']
+    };
+
+    // Check for each day
+    Object.keys(dayPatterns).forEach(day => {
+        const patterns = dayPatterns[day];
+        if (patterns.some(pattern => text.includes(pattern))) {
+            schedule.days.push(day);
+        }
+    });
+
+    // If no specific days mentioned, assume daily
+    if (schedule.days.length === 0) {
+        schedule.days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+    }
+
+    // Parse time ranges (basic implementation)
+    const timeRegex = /(\d{1,2})(?::(\d{2}))?\s*(am|pm)?\s*[-–]\s*(\d{1,2})(?::(\d{2}))?\s*(am|pm)?/g;
+    let match;
+    while ((match = timeRegex.exec(text)) !== null) {
+        const startHour = parseInt(match[1]);
+        const startMinute = match[2] ? parseInt(match[2]) : 0;
+        const startPeriod = match[3];
+        const endHour = parseInt(match[4]);
+        const endMinute = match[5] ? parseInt(match[5]) : 0;
+        const endPeriod = match[6];
+
+        // Convert to 24-hour format
+        let start24 = startHour;
+        let end24 = endHour;
+
+        if (startPeriod === 'pm' && startHour !== 12) start24 += 12;
+        if (startPeriod === 'am' && startHour === 12) start24 = 0;
+        if (endPeriod === 'pm' && endHour !== 12) end24 += 12;
+        if (endPeriod === 'am' && endHour === 12) end24 = 0;
+
+        schedule.times.push({
+            start: start24 * 60 + startMinute,
+            end: end24 * 60 + endMinute
+        });
+    }
+
+    // If no times found but days were specified, assume it's a complex schedule we can't parse
+    if (schedule.times.length === 0 && schedule.days.length < 7) {
+        return { type: 'complex', original: scheduleText };
+    }
+
+    // If no times found and all days, assume it's always open during business hours or similar
+    if (schedule.times.length === 0) {
+        return { type: 'unknown', original: scheduleText };
+    }
+
+    return schedule;
+}
+
+function isLocationOpenNow(scheduleText) {
+    const schedule = parseSchedule(scheduleText);
+    if (!schedule) return null;
+
+    const now = new Date();
+    const currentDay = now.toLocaleLowerCase().substring(0, 3); // 'mon', 'tue', etc.
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+    switch (schedule.type) {
+        case 'always':
+            return true;
+        case 'appointment':
+            return null; // Unknown - requires appointment
+        case 'complex':
+        case 'unknown':
+            return null; // Can't determine
+        case 'scheduled':
+            // Check if current day is in schedule
+            const dayMap = {
+                'mon': 'monday',
+                'tue': 'tuesday',
+                'wed': 'wednesday',
+                'thu': 'thursday',
+                'fri': 'friday',
+                'sat': 'saturday',
+                'sun': 'sunday'
+            };
+
+            const fullDayName = dayMap[currentDay];
+            if (!schedule.days.includes(fullDayName)) {
+                return false;
+            }
+
+            // Check if current time is within any time range
+            return schedule.times.some(timeRange => {
+                return currentMinutes >= timeRange.start && currentMinutes <= timeRange.end;
+            });
+
+        default:
+            return null;
+    }
+}
+
 function updateBranding(county) {
     const titleEl = document.querySelector('.site-title');
     const taglineEl = document.querySelector('.tagline');
@@ -351,6 +480,7 @@ function showApiError() {
                 <div class="location-name">${escapeHtml(location.name)}</div>
                 <div class="location-type" style="font-size: 13px; color: var(--accent-3); font-weight: 600; margin-bottom: 4px;">${escapeHtml(location.type)}</div>
                 <div class="location-address">${escapeHtml(location.address)}</div>
+                ${location.schedule ? `<div style="font-size: 13px; color: var(--muted); margin: 4px 0; font-style: italic;">${escapeHtml(location.schedule)}</div>` : ''}
                 <div style="margin-top: 8px; font-size: 14px; color: var(--muted);">
                     ${escapeHtml(location.description || 'No description available')}
                 </div>

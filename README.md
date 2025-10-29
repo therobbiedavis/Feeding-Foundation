@@ -195,6 +195,7 @@ Each location in `locations.json` follows this structure:
   "county": "Coweta",
   "type": "Food Bank",
   "description": "Open Tuesdays and Thursdays, 9am-5pm",
+  "schedule": "Tuesdays and Thursdays 9:30am-12pm",
   "active": true,
   "lat": 33.3854297,
   "lng": -84.8276268
@@ -215,6 +216,7 @@ Each location in `locations.json` follows this structure:
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `description` | String | "Take what you need..." | Brief description |
+| `schedule` | String | `null` | Hours/days of operation (e.g., "Tuesdays and Thursdays 9:30am-12pm") |
 | `active` | Boolean | `true` | Whether location is operational |
 | `lat` | Number | `null` | Latitude (recommended to pre-geocode) |
 | `lng` | Number | `null` | Longitude (recommended to pre-geocode) |

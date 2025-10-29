@@ -22,6 +22,7 @@ body:
           "county": "Coweta",
           "type": "Food Bank",
           "description": "Open Tuesdays and Thursdays 9am-5pm",
+          "schedule": "Tuesdays and Thursdays 9:30am-12pm",
           "active": true,
           "lat": null,
           "lng": null

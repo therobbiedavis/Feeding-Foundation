@@ -107,6 +107,11 @@
                     <textarea id="description" placeholder="Brief description of the location and what it offers"></textarea>
                 </div>
 
+                <div class="form-group">
+                    <label for="schedule">Schedule/Hours</label>
+                    <textarea id="schedule" placeholder="e.g., Tuesdays and Thursdays 9:30am-12pm, or 24/7 for pantries"></textarea>
+                </div>
+
                 <div class="form-group" style="display: flex; align-items: center; gap: 12px; margin-bottom: 32px;">
                     <input type="checkbox" id="active" checked>
                     <label for="active" style="margin: 0; font-weight: 600; cursor: pointer;">Location is currently active</label>
@@ -155,6 +160,7 @@
             const address = document.getElementById('address').value.trim();
             const type = document.getElementById('type').value;
             const description = document.getElementById('description').value.trim();
+            const schedule = document.getElementById('schedule').value.trim();
             const active = document.getElementById('active').checked;
 
             if (!county || !name || !address || !type) {
@@ -168,6 +174,7 @@
                 county: county,
                 type: type,
                 description: description || "Take what you need, leave what you can.",
+                schedule: schedule || null,
                 active: active,
                 lat: null,
                 lng: null
