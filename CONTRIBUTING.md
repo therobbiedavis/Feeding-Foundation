@@ -90,15 +90,19 @@ We prefer pre-geocoding addresses and storing `lat`/`lng` in `locations.json` to
 
 ## Licensing & Code of Conduct
 
-By contributing, you agree your contributions are licensed under the project's license (add LICENSE file to the repo if not present).
+By contributing, you agree your contributions are licensed under the project's [MIT License](LICENSE).
 
-Consider adding a `CODE_OF_CONDUCT.md` to define community expectations.
+This project follows a [Code of Conduct](CODE_OF_CONDUCT.md) to ensure a welcoming environment for all contributors. Please read and follow these guidelines when participating in our community.
+
+### Contact
+
+For questions about contributions or to report violations of the Code of Conduct, please [create an issue](https://github.com/therobbiedavis/Feeding-Foundation/issues) or contact the maintainers.
 
 ---
 
-If you'd like, I can also:
+## Additional Resources
 
-- Create `CODE_OF_CONDUCT.md` and `LICENSE` files (e.g., MIT)
-- Add an automated JSON linter/CI job that validates new `locations.json` entries before merging
+- [GitHub Community Guidelines](https://docs.github.com/en/github/site-policy/github-community-guidelines)
+- [Open Source Guides](https://opensource.guide/)
 
 Thanks for contributing — every location helps people find food and support in their community.

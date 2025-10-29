@@ -148,6 +148,8 @@ node pregeocode.js
 
 We welcome contributions from everyone! See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
 
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CODE_OF_CONDUCT.md)
+
 ### Quick Contribution Guide
 
 #### For Community Members (No Coding Required)
