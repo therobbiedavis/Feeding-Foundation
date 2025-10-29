@@ -6,6 +6,7 @@ let geocodePromises = [];
 let locationsData = [];
 let selectedCounty = '';
 let selectedType = '';
+let isUpdatingDropdowns = false;
 
 // Fallback for when Google Maps API fails to load
 window.gm_authFailure = function() {
@@ -65,15 +66,43 @@ function initMap() {
         // County selector
         const countySelect = document.getElementById('county-select');
         countySelect.addEventListener('change', () => {
+            if (isUpdatingDropdowns) return;
             selectedCounty = countySelect.value;
             updateBranding(selectedCounty);
+            // Update type dropdown based on selected county
+            isUpdatingDropdowns = true;
+            if (selectedCounty) {
+                const filtered = locationsData.filter(loc => loc.active !== false && loc.county === selectedCounty);
+                populateTypeDropdown(filtered);
+            } else {
+                populateTypeDropdown(locationsData);
+            }
+            // Preserve selected type if still available
+            if (selectedType && typeSelect.querySelector(`option[value="${selectedType}"]`)) {
+                typeSelect.value = selectedType;
+            }
+            isUpdatingDropdowns = false;
             filterLocations();
         });
 
         // Type selector
         const typeSelect = document.getElementById('type-select');
         typeSelect.addEventListener('change', () => {
+            if (isUpdatingDropdowns) return;
             selectedType = typeSelect.value;
+            // Update county dropdown based on selected type
+            isUpdatingDropdowns = true;
+            if (selectedType) {
+                const filtered = locationsData.filter(loc => loc.active !== false && loc.type === selectedType);
+                populateCountyDropdown(filtered);
+            } else {
+                populateCountyDropdown(locationsData);
+            }
+            // Preserve selected county if still available
+            if (selectedCounty && countySelect.querySelector(`option[value="${selectedCounty}"]`)) {
+                countySelect.value = selectedCounty;
+            }
+            isUpdatingDropdowns = false;
             filterLocations();
         });
 
@@ -115,8 +144,10 @@ function loadLocations() {
         .then(response => response.json())
         .then(data => {
             locationsData = data.locations || [];
+            isUpdatingDropdowns = true;
             populateCountyDropdown(locationsData);
             populateTypeDropdown(locationsData);
+            isUpdatingDropdowns = false;
             // Show all active locations on first load
             filterLocations();
         })
