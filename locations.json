@@ -155,8 +155,9 @@
       "address": "19 First Ave, Newnan, GA 30263",
       "county": "Coweta",
       "type": "Food Distribution",
-      "description": "Offers food distribution on Wednesdays at 4:30 p.m. and Saturdays at 8 a.m. They also provide home delivery for residents who are shut-in or lack transportation.",
-      "schedule": "Wednesdays 4:30 PM, Saturdays 8:00 AM",
+      "description": "Offers food distribution on Wednesdays at 5 p.m. and Saturdays at 8 a.m. They also provide home delivery for residents who are shut-in or lack transportation.",
+      "schedule": "Wednesdays 5:00 PM - 7:00 PM, Saturdays 8:00 AM - 1:00 PM",
+      "website": "https://btgcommunity.org/food-distribution/",
       "lat": 33.3725304,
       "lng": -84.80289189999999
     },
@@ -167,6 +168,7 @@
       "type": "Food Pantry",
       "description": "Open on Mondays, Wednesdays, and Fridays from 1–4 p.m. Patrons can pick up food boxes twice a month.",
       "schedule": "Mondays, Wednesdays, Fridays 1:00 PM - 4:00 PM",
+      "website": "https://www.oneroofoutreach.org/assistance",
       "lat": 33.3854552,
       "lng": -84.8170602
     },
@@ -176,7 +178,8 @@
       "county": "Coweta",
       "type": "Food Pantry",
       "description": "Provides food assistance on Mondays, Tuesdays, and Wednesdays from 9–11 a.m.",
-      "schedule": "Mondays, Tuesdays, Wednesdays 9:00 AM - 11:00 AM",
+      "schedule": "Mondays, Tuesdays, Wednesdays, Thursdays 9:00 AM - 11:00 AM",
+      "website": "https://www.fbcnewnan.org/ministries/the-ao-house-mission-center/",
       "lat": 33.375343,
       "lng": -84.8009176
     },
@@ -187,6 +190,7 @@
       "type": "Food Pantry",
       "description": "Hosts a food pantry on Tuesdays and Thursdays from 9:30 a.m. to 12 p.m. A photo ID and completed paperwork are required.",
       "schedule": "Tuesdays, Thursdays 9:30 AM - 12:00 PM",
+      "website": "https://www.facebook.com/TSANewnan/",
       "lat": 33.3919416,
       "lng": -84.7802667
     },
@@ -195,8 +199,9 @@
       "address": "2450 GA-85, Senoia, GA 30276",
       "county": "Coweta",
       "type": "Food Distribution",
-      "description": "Distributes food on Thursdays from 9:30 a.m. to 2:30 p.m.",
-      "schedule": "Thursdays 9:30 AM - 2:30 PM",
+      "description": "Distributes food on Thursdays from 9:30 a.m. to 2:30 p.m. When checking in for the first time, you will be asked for your Driver’s License (or other state-issued picture ID) and to complete an information form about you and your household.",
+      "schedule": "Thursdays 8:30 AM - 2:30 PM",
+      "website": "https://thei58mission.org/ministries/",
       "lat": 33.3004769,
       "lng": -84.5383891
     },
@@ -205,8 +210,9 @@
       "address": "265 Yeager Rd, Newnan, GA 30263",
       "county": "Coweta",
       "type": "Mobile Food Pantry",
-      "description": "Offers a mobile food pantry on the first Saturday of each month.",
-      "schedule": "First Saturday of each month",
+      "description": "Offers a mobile food pantry on the second Saturday of each month.",
+      "schedule": "Second Saturday of each month",
+      "website": "https://yeagerrdresourcecenter.org/food-pantry",
       "lat": 33.3513928,
       "lng": -84.7401086
     },
@@ -221,12 +227,13 @@
       "lng": -84.79965729999999
     },
     {
-      "name": "Crossroads Church Little Free Pantry",
-      "address": "2564 Highway 154, Newnan, GA 30263",
+      "name": "Crossroads Food Pantry",
+      "address": "2564 GA-154, Newnan, GA 30265",
       "county": "Coweta",
-      "type": "Little Free Pantry",
-      "description": "Free 24-hour little pantry available for emergency needs.",
-      "schedule": "24/7 access",
+      "type": "Food Pantry",
+      "description": "The Crossroads Food Pantry is located at our Thomas Crossroads Campus. Call 770-254-0291 on Tuesday's at 8am to schedule an appointment for the following week.",
+      "schedule": "Mondays 3:00PM-6:30PM",
+      "website": "https://www.crossroadsonline.org/food-pantry",
       "lat": 33.4007667,
       "lng": -84.6841948
     }

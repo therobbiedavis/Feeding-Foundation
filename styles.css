@@ -145,7 +145,7 @@ body{
     display:flex;
     flex-direction:column;
     gap:14px;
-    padding:28px 24px 0;
+    padding:15px 24px 0;
     border-bottom:1px solid rgba(31,127,99,0.08);
     background:linear-gradient(180deg,rgba(247,251,249,0.5) 0%,transparent 100%);
 }
@@ -617,39 +617,102 @@ body{
     width:100%;
     box-shadow:0 4px 12px rgba(31,127,99,0.25);
 }
-.btn-submit:hover{
+.btn-submit:hover:not(:disabled){
     transform:translateY(-2px);
     box-shadow:0 6px 20px rgba(31,127,99,0.35);
 }
-.btn-submit:active{transform:translateY(0)}
+.btn-submit:active:not(:disabled){transform:translateY(0)}
+.btn-submit:disabled{
+    background:linear-gradient(135deg,#e6eef0 0%,#d1d9db 100%);
+    color:#9ca3af;
+    cursor:not-allowed;
+    box-shadow:none;
+    transform:none;
+}
 .json-output{
     margin-top:32px;
     padding:24px;
-    background:#f8f9fa;
-    border:2px solid #e6eef0;
+    background:var(--card);
+    border:1px solid rgba(31,127,99,0.08);
     border-radius:var(--radius-sm);
+    box-shadow:var(--shadow-card);
     font-family:'Courier New',monospace;
     font-size:13px;
     white-space:pre-wrap;
     word-break:break-all;
     display:none;
     animation:fadeIn 0.3s ease;
+    border-left:4px solid var(--accent-3);
+}
+.json-output pre{
+    background:linear-gradient(135deg,rgba(31,127,99,0.02) 0%,rgba(59,191,154,0.02) 100%);
+    border:1px solid rgba(31,127,99,0.06);
+    border-radius:8px;
+    padding:16px;
+    margin:0;
+    overflow-x:auto;
+    overflow-y:auto;
+    max-height:360px; /* keep block compact while allowing scroll */
+    white-space:pre; /* preserve JSON formatting */
+    word-break:normal;
+    font-family:'Courier New',monospace;
+    font-size:13px;
+    line-height:1.5;
+    color:#052018;
+}
+.json-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:16px;
+    gap:16px;
+}
+.json-title{
+    font-size:15px;
+    font-weight:700;
+    color:#052018;
+    letter-spacing:-0.01em;
+}
+.code-badge{
+    display:inline-block;
+    font-size:11px;
+    font-weight:700;
+    padding:4px 8px;
+    border-radius:999px;
+    background:rgba(31,127,99,0.08);
+    color:var(--accent-3);
+    letter-spacing:0.04em;
+}
+
+/* Layout tweaks for JSON header */
+.json-left{display:flex;align-items:center;gap:10px}
+.json-left .json-title{white-space:nowrap}
+.json-actions{display:flex;align-items:center;gap:8px}
+
+/* Prevent wrapping in small badge and copy button */
+.code-badge{white-space:nowrap; padding:3px 8px; font-size:12px}
+.json-header .copy-btn{white-space:nowrap; padding:8px 12px; border-radius:12px; font-size:14px}
+.json-header .copy-btn{min-width:auto}
+
+/* Muted placeholder text for empty JSON */
+.json-output pre:empty, .json-output pre:contains('// Please'){
+    color:var(--muted);
 }
 .copy-btn{
-    margin-top:16px;
-    background:var(--accent-3);
+    background:linear-gradient(135deg,var(--accent) 0%,var(--accent-3) 100%);
     color:white;
     border:none;
-    padding:10px 20px;
+    padding:12px 20px;
     border-radius:10px;
     cursor:pointer;
     font-size:14px;
     font-weight:600;
     transition:var(--transition);
+    box-shadow:0 2px 8px rgba(31,127,99,0.15);
 }
 .copy-btn:hover{
-    background:#2e8b57;
     transform:translateY(-1px);
+    box-shadow:0 4px 12px rgba(31,127,99,0.25);
 }
 .instructions{
     background:linear-gradient(135deg,#e8f5e8 0%,#f0f9f0 100%);
@@ -757,9 +820,10 @@ body{
     .header-actions{gap:8px}
     .header-actions .btn{padding:10px 16px;font-size:14px}
     .form-container{padding:28px 24px}
+    .json-output{padding:20px}
+    .json-header{flex-direction:column;align-items:flex-start;gap:12px}
+    .json-title{font-size:14px}
 }
-
-/* Focus States */
 .btn:focus-visible,
 input:focus-visible,
 select:focus-visible,

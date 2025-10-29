@@ -190,6 +190,7 @@ function populateLocations(list) {
                 <p>${escapeHtml(location.description || '')}</p>
                 ${location.schedule ? `<p><em>${escapeHtml(location.schedule)}</em></p>` : ''}
                 <p class="muted"><em>${escapeHtml(location.address || (location.lat+','+location.lng))}</em></p>
+                ${location.website ? `<p><a href="${escapeHtml(location.website)}" target="_blank" rel="noopener">Visit Website</a></p>` : ''}
                 <p><a href="${directionsLink}" target="_blank" rel="noopener">Directions</a></p>
                 <p><a href="https://github.com/therobbiedavis/Feeding-Foundation/issues/new?template=report-inactive.yml&title=${encodeURIComponent('Report Inactive: ' + location.name)}&location-json=${locationJson}" target="_blank" rel="noopener">Report inactive / closed</a></p>
             `;
@@ -237,6 +238,7 @@ function makeListItem(location, idx) {
         <div class="location-type" style="font-size: 13px; color: var(--accent-3); font-weight: 600; margin-bottom: 4px;">${escapeHtml(location.type)}</div>
         <div class="location-address">${escapeHtml(location.address)}</div>
         ${location.schedule ? `<div style="font-size: 13px; color: var(--muted); margin: 4px 0; font-style: italic;">${escapeHtml(location.schedule)}</div>` : ''}
+        ${location.website ? `<div style="font-size: 13px; margin: 4px 0;"><a href="${escapeHtml(location.website)}" target="_blank" rel="noopener" style="color: var(--accent);">Visit Website</a></div>` : ''}
         <div style="margin-top:8px;font-size:13px;">
             <a href="https://github.com/therobbiedavis/Feeding-Foundation/issues/new?template=report-inactive.yml&title=${encodeURIComponent('Report Inactive: ' + location.name)}&location-json=${locationJson}" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600;">Report inactive</a>
         </div>
@@ -647,6 +649,7 @@ function showApiError() {
                 <div class="location-type" style="font-size: 13px; color: var(--accent-3); font-weight: 600; margin-bottom: 4px;">${escapeHtml(location.type)}</div>
                 <div class="location-address">${escapeHtml(location.address)}</div>
                 ${location.schedule ? `<div style="font-size: 13px; color: var(--muted); margin: 4px 0; font-style: italic;">${escapeHtml(location.schedule)}</div>` : ''}
+                ${location.website ? `<div style="font-size: 13px; margin: 4px 0;"><a href="${escapeHtml(location.website)}" target="_blank" rel="noopener" style="color: var(--accent);">Visit Website</a></div>` : ''}
                 <div style="margin-top: 8px; font-size: 14px; color: var(--muted);">
                     ${escapeHtml(location.description || 'No description available')}
                 </div>
