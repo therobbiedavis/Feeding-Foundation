@@ -1,8 +1,7 @@
 blank_issues_enabled: true
 contact_links:
   - name: 📍 Add a New Location (Recommended)
-    url: https://therobbiedavis.github.io/Feeding-Foundation/add-location.html
-    about: Use our web form to generate location data, then submit via issue template
+    url: "https://github.com/therobbiedavis/Feeding-Foundation/issues/new?labels=location-submission&template=add-location.yml&title=Add%20New%20Location"
   - name: 💬 General Discussion or Questions
     url: https://github.com/therobbiedavis/Feeding-Foundation/discussions
     about: Ask questions, share ideas, or discuss the project
