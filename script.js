@@ -147,13 +147,14 @@ function populateLocations(list) {
             const dest = latLng.lat && latLng.lng ? `${latLng.lat()},${latLng.lng()}` : encodeURIComponent(location.address);
             const directionsLink = `https://www.google.com/maps/dir/?api=1&destination=${dest}`;
 
+            const locationJson = encodeURIComponent(JSON.stringify(location, null, 2));
             const infoContent = `
                 <h3>${escapeHtml(location.name)}</h3>
                 <p><strong>${escapeHtml(location.type)}</strong></p>
                 <p>${escapeHtml(location.description || '')}</p>
                 <p class="muted"><em>${escapeHtml(location.address || (location.lat+','+location.lng))}</em></p>
                 <p><a href="${directionsLink}" target="_blank" rel="noopener">Directions</a></p>
-                <p><a href="https://github.com/therobbiedavis/Feeding-Foundation/issues/new?template=report-inactive.yml&title=${encodeURIComponent('Report Inactive: ' + location.name)}" target="_blank" rel="noopener">Report inactive / closed</a></p>
+                <p><a href="https://github.com/therobbiedavis/Feeding-Foundation/issues/new?template=report-inactive.yml&title=${encodeURIComponent('Report Inactive: ' + location.name)}&location-json=${locationJson}" target="_blank" rel="noopener">Report inactive / closed</a></p>
             `;
 
             const info = new google.maps.InfoWindow({
@@ -186,6 +187,7 @@ function populateLocations(list) {
 }
 
 function makeListItem(location, idx) {
+    const locationJson = encodeURIComponent(JSON.stringify(location, null, 2));
     const el = document.createElement('div');
     el.className = 'location-item';
     el.dataset.index = idx;
@@ -194,7 +196,7 @@ function makeListItem(location, idx) {
         <div class="location-type" style="font-size: 13px; color: var(--accent-3); font-weight: 600; margin-bottom: 4px;">${escapeHtml(location.type)}</div>
         <div class="location-address">${escapeHtml(location.address)}</div>
         <div style="margin-top:8px;font-size:13px;">
-            <a href="https://github.com/therobbiedavis/Feeding-Foundation/issues/new?template=report-inactive.yml&title=${encodeURIComponent('Report Inactive: ' + location.name)}" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600;">Report inactive</a>
+            <a href="https://github.com/therobbiedavis/Feeding-Foundation/issues/new?template=report-inactive.yml&title=${encodeURIComponent('Report Inactive: ' + location.name)}&location-json=${locationJson}" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600;">Report inactive</a>
         </div>
     `;
     el.addEventListener('click', () => {
