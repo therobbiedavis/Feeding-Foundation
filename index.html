@@ -37,9 +37,14 @@
         <aside id="sidebar" class="sidebar">
             <div class="sidebar-header">
                 <h3>Locations</h3>
-                <select id="county-select" aria-label="Select county">
-                    <option value="">All Counties</option>
-                </select>
+                <div class="filter-row">
+                    <select id="county-select" aria-label="Select county">
+                        <option value="">All Counties</option>
+                    </select>
+                    <select id="type-select" aria-label="Select type">
+                        <option value="">All Types</option>
+                    </select>
+                </div>
                 <input id="search" type="search" placeholder="Search by name or city" aria-label="Search locations">
             </div>
             <div id="list" class="locations-list">

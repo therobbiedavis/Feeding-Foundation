@@ -5,6 +5,7 @@ let infoWindows = [];
 let geocodePromises = [];
 let locationsData = [];
 let selectedCounty = '';
+let selectedType = '';
 
 // Fallback for when Google Maps API fails to load
 window.gm_authFailure = function() {
@@ -56,6 +57,13 @@ function initMap() {
             filterLocations();
         });
 
+        // Type selector
+        const typeSelect = document.getElementById('type-select');
+        typeSelect.addEventListener('change', () => {
+            selectedType = typeSelect.value;
+            filterLocations();
+        });
+
         // Search input
         const searchInput = document.getElementById('search');
         searchInput.addEventListener('input', () => {
@@ -68,12 +76,15 @@ function initMap() {
         console.error('Error initializing map:', error);
         showApiError();
     }
-}function loadLocations() {
+}
+
+function loadLocations() {
     fetch('locations.json')
         .then(response => response.json())
         .then(data => {
             locationsData = data.locations || [];
             populateCountyDropdown(locationsData);
+            populateTypeDropdown(locationsData);
             // Show all active locations on first load
             filterLocations();
         })
@@ -85,7 +96,7 @@ function populateLocations(list) {
     listEl.innerHTML = '';
     
     if (list.length === 0) {
-        if (selectedCounty) {
+        if (selectedCounty || selectedType) {
             listEl.innerHTML = '<div style="text-align: center; padding: 40px 20px; color: var(--muted);"><p>No active locations found for the selected criteria.</p></div>';
         } else {
             listEl.innerHTML = '<div style="text-align: center; padding: 40px 20px; color: var(--muted);"><p>No active locations available.</p></div>';
@@ -136,7 +147,7 @@ function populateLocations(list) {
             const dest = latLng.lat && latLng.lng ? `${latLng.lat()},${latLng.lng()}` : encodeURIComponent(location.address);
             const directionsLink = `https://www.google.com/maps/dir/?api=1&destination=${dest}`;
 
-            const infoContent = `<h3>${escapeHtml(location.name)}</h3><p>${escapeHtml(location.description || '')}</p><p class="muted"><em>${escapeHtml(location.address || (location.lat+','+location.lng))}</em></p><p><a href="${directionsLink}" target="_blank" rel="noopener">Directions</a></p>`;
+            const infoContent = `<h3>${escapeHtml(location.name)}</h3><p><strong>${escapeHtml(location.type)}</strong></p><p>${escapeHtml(location.description || '')}</p><p class="muted"><em>${escapeHtml(location.address || (location.lat+','+location.lng))}</em></p><p><a href="${directionsLink}" target="_blank" rel="noopener">Directions</a></p>`;
 
             const info = new google.maps.InfoWindow({
                 content: infoContent
@@ -171,7 +182,11 @@ function makeListItem(location, idx) {
     const el = document.createElement('div');
     el.className = 'location-item';
     el.dataset.index = idx;
-    el.innerHTML = `<div class="location-name">${escapeHtml(location.name)}</div><div class="location-address">${escapeHtml(location.address)}</div>`;
+    el.innerHTML = `
+        <div class="location-name">${escapeHtml(location.name)}</div>
+        <div class="location-type" style="font-size: 13px; color: var(--accent-3); font-weight: 600; margin-bottom: 4px;">${escapeHtml(location.type)}</div>
+        <div class="location-address">${escapeHtml(location.address)}</div>
+    `;
     el.addEventListener('click', () => {
         openLocation(idx).catch(err => {
             console.warn('Could not open location:', err);
@@ -224,7 +239,11 @@ function filterLocations() {
     if (selectedCounty) {
         filtered = filtered.filter(loc => loc.county === selectedCounty);
     }
-    // If no county selected, show all active locations
+    
+    // Filter by type if selected
+    if (selectedType) {
+        filtered = filtered.filter(loc => loc.type === selectedType);
+    }
     
     // Filter by search query
     if (searchQuery) {
@@ -281,11 +300,6 @@ function updateBranding(county) {
     }
 }
 
-function showCountyPrompt() {
-    const listEl = document.getElementById('list');
-    listEl.innerHTML = '<div style="text-align: center; padding: 40px 20px; color: var(--muted);"><p>Select a county above to view available locations.</p></div>';
-}
-
 function showApiError() {
     const errorEl = document.getElementById('api-error');
     const mapEl = document.getElementById('map');
@@ -310,6 +324,7 @@ function showApiError() {
             item.className = 'location-item';
             item.innerHTML = `
                 <div class="location-name">${escapeHtml(location.name)}</div>
+                <div class="location-type" style="font-size: 13px; color: var(--accent-3); font-weight: 600; margin-bottom: 4px;">${escapeHtml(location.type)}</div>
                 <div class="location-address">${escapeHtml(location.address)}</div>
                 <div style="margin-top: 8px; font-size: 14px; color: var(--muted);">
                     ${escapeHtml(location.description || 'No description available')}
@@ -324,8 +339,13 @@ function showApiError() {
 function populateCountyDropdown(locations) {
     const countySelect = document.getElementById('county-select');
 
-    // Get unique counties and sort them
-    const counties = [...new Set(locations.map(loc => loc.county).filter(county => county))].sort();
+    // Get unique counties from active locations and sort them
+    const counties = [...new Set(
+        locations
+            .filter(loc => loc.active !== false)
+            .map(loc => loc.county)
+            .filter(county => county)
+    )].sort();
 
     // Clear existing options except the first one
     while (countySelect.options.length > 1) {
@@ -338,5 +358,30 @@ function populateCountyDropdown(locations) {
         option.value = county;
         option.textContent = `${county} County`;
         countySelect.appendChild(option);
+    });
+}
+
+function populateTypeDropdown(locations) {
+    const typeSelect = document.getElementById('type-select');
+
+    // Get unique types from active locations and sort them
+    const types = [...new Set(
+        locations
+            .filter(loc => loc.active !== false)
+            .map(loc => loc.type)
+            .filter(type => type)
+    )].sort();
+
+    // Clear existing options except the first one
+    while (typeSelect.options.length > 1) {
+        typeSelect.remove(1);
+    }
+
+    // Add type options
+    types.forEach(type => {
+        const option = document.createElement('option');
+        option.value = type;
+        option.textContent = type;
+        typeSelect.appendChild(option);
     });
 }

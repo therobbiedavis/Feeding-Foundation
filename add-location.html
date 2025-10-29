@@ -6,112 +6,8 @@
     <title>Add Location - Feeding Foundation</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    <style>
-        .form-container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: var(--card);
-            border-radius: var(--radius);
-            padding: 32px;
-            box-shadow: var(--shadow);
-        }
-        .form-group {
-            margin-bottom: 24px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #052018;
-        }
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 12px 16px;
-            border: 1px solid #e6eef0;
-            border-radius: 8px;
-            font-size: 14px;
-            font-family: inherit;
-            transition: var(--transition);
-            box-sizing: border-box;
-        }
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: var(--accent-3);
-            box-shadow: 0 0 0 3px rgba(59,191,154,0.1);
-        }
-        .form-group textarea {
-            min-height: 80px;
-            resize: vertical;
-        }
-        .btn-submit {
-            background: var(--accent);
-            color: white;
-            border: none;
-            padding: 14px 24px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            width: 100%;
-        }
-        .btn-submit:hover {
-            background: var(--accent-2);
-            transform: translateY(-1px);
-        }
-        .json-output {
-            margin-top: 32px;
-            padding: 16px;
-            background: #f8f9fa;
-            border: 1px solid #e6eef0;
-            border-radius: 8px;
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
-            white-space: pre-wrap;
-            word-break: break-all;
-            display: none;
-        }
-        .copy-btn {
-            margin-top: 12px;
-            background: var(--accent-3);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        .copy-btn:hover {
-            background: #2e8b57;
-        }
-        .instructions {
-            background: #e8f5e8;
-            border: 1px solid #c8e6c9;
-            border-radius: 8px;
-            padding: 16px;
-            margin-top: 24px;
-        }
-        .instructions h3 {
-            margin-top: 0;
-            color: var(--accent);
-        }
-        .back-link {
-            display: inline-block;
-            margin-bottom: 24px;
-            color: var(--accent);
-            text-decoration: none;
-            font-weight: 500;
-        }
-        .back-link:hover {
-            text-decoration: underline;
-        }
-    </style>
 </head>
 <body>
     <header class="site-header">
@@ -123,15 +19,25 @@
                     <p class="tagline">Add a New Location</p>
                 </div>
             </div>
+            <nav class="header-actions">
+                <a href="index.html" class="btn">← Back to Map</a>
+            </nav>
         </div>
     </header>
 
-    <main class="container" style="padding: 40px 24px;">
-        <a href="index.html" class="back-link">← Back to Map</a>
+    <section class="hero">
+        <div class="container hero-inner">
+            <h2>Help expand our community resources</h2>
+            <p>Submit a new food resource location to connect more people with vital services in your area.</p>
+        </div>
+    </section>
 
+    <main class="container" style="padding: 48px 24px; max-width: 800px;">
         <div class="form-container">
-            <h2 style="margin-top: 0; color: #052018;">Add a New Food Resource Location</h2>
-            <p style="color: var(--muted); margin-bottom: 32px;">Help expand our community food resources database by adding a new location.</p>
+            <div style="text-align: center; margin-bottom: 40px;">
+                <h2 style="margin: 0 0 12px; color: #052018; font-size: 28px; font-weight: 800; letter-spacing: -0.03em;">Add a New Food Resource</h2>
+                <p style="color: var(--muted); font-size: 16px; line-height: 1.7;">Fill out the form below to contribute to our database and help your community.</p>
+            </div>
 
             <form id="location-form">
                 <div class="form-group">
@@ -189,31 +95,37 @@
                     <textarea id="description" placeholder="Brief description of the location and what it offers"></textarea>
                 </div>
 
-                <div class="form-group">
-                    <label for="active">
-                        <input type="checkbox" id="active" checked> Location is currently active
-                    </label>
+                <div class="form-group" style="display: flex; align-items: center; gap: 12px; margin-bottom: 32px;">
+                    <input type="checkbox" id="active" checked>
+                    <label for="active" style="margin: 0; font-weight: 600; cursor: pointer;">Location is currently active</label>
                 </div>
 
                 <button type="submit" class="btn-submit">Generate Location Data</button>
             </form>
 
             <div id="json-output" class="json-output">
-                <strong>Copy this JSON and submit it as a GitHub issue:</strong>
-                <pre id="json-content"></pre>
-                <button class="copy-btn" onclick="copyToClipboard()">Copy to Clipboard</button>
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                    <strong style="font-size: 15px; color: #052018;">📋 Copy this JSON code:</strong>
+                    <button class="copy-btn" onclick="copyToClipboard()">Copy to Clipboard</button>
+                </div>
+                <pre id="json-content" style="margin: 0;"></pre>
             </div>
 
             <div class="instructions">
-                <h3>How to Submit Your Location</h3>
+                <h3>📝 How to Submit Your Location</h3>
                 <ol>
-                    <li>Fill out the form above and click "Generate Location Data"</li>
-                    <li>Copy the generated JSON code</li>
-                    <li><a href="https://github.com/therobbiedavis/Feeding-Foundation/issues/new?title=Add%20New%20Location&labels=location-submission" target="_blank">Create a new GitHub issue</a></li>
-                    <li>Paste the JSON code in the issue description</li>
-                    <li>Click "Submit new issue"</li>
+                    <li>Fill out the form above with accurate information about the food resource location</li>
+                    <li>Click <strong>"Generate Location Data"</strong> to create the JSON code</li>
+                    <li>Click <strong>"Copy to Clipboard"</strong> to copy the generated code</li>
+                    <li><a href="https://github.com/therobbiedavis/Feeding-Foundation/issues/new?title=Add%20New%20Location&labels=location-submission" target="_blank" rel="noopener">Create a new GitHub issue</a> using our template</li>
+                    <li>Paste the JSON code in the designated area of the issue</li>
+                    <li>Add any additional context or verification details</li>
+                    <li>Submit the issue for review</li>
                 </ol>
-                <p><strong>Note:</strong> A maintainer will review your submission and add it to the database if approved.</p>
+                <div style="margin-top: 20px; padding: 16px; background: rgba(59,191,154,0.08); border-radius: 10px; border-left: 4px solid var(--accent-3);">
+                    <p style="margin: 0; font-weight: 600; color: #052018;">✅ What happens next?</p>
+                    <p style="margin: 8px 0 0; line-height: 1.7;">A maintainer will review your submission to verify the location details. Once approved, the location will be added to the map and become visible to the community.</p>
+                </div>
             </div>
         </div>
     </main>
@@ -253,8 +165,10 @@
             document.getElementById('json-content').textContent = jsonString;
             document.getElementById('json-output').style.display = 'block';
 
-            // Scroll to the output
-            document.getElementById('json-output').scrollIntoView({ behavior: 'smooth' });
+            // Scroll to the output with smooth animation
+            setTimeout(() => {
+                document.getElementById('json-output').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
         });
 
         function copyToClipboard() {
@@ -262,12 +176,12 @@
             navigator.clipboard.writeText(jsonContent).then(function() {
                 const btn = document.querySelector('.copy-btn');
                 const originalText = btn.textContent;
-                btn.textContent = 'Copied!';
-                btn.style.background = '#28a745';
+                btn.textContent = '✓ Copied!';
+                btn.style.background = 'linear-gradient(135deg, #28a745 0%, #20c997 100%)';
                 setTimeout(() => {
                     btn.textContent = originalText;
                     btn.style.background = '';
-                }, 2000);
+                }, 2500);
             }).catch(function(err) {
                 console.error('Failed to copy: ', err);
                 alert('Failed to copy to clipboard. Please select and copy manually.');
@@ -276,7 +190,17 @@
 
         // Set current year
         document.getElementById('year').textContent = new Date().getFullYear();
+
+        // Add animation on form input focus
+        document.querySelectorAll('input, select, textarea').forEach(el => {
+            el.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'translateX(4px)';
+                this.parentElement.style.transition = 'transform 0.2s ease';
+            });
+            el.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'translateX(0)';
+            });
+        });
     </script>
 </body>
-</html></content>
-<parameter name="filePath">c:\Users\Robbie\Documents\GitHub\Feeding-Foundation\add-location.html
+</html>
