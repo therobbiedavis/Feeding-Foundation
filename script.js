@@ -46,6 +46,19 @@ function initMap() {
             document.getElementById('sidebar').classList.toggle('open');
         });
 
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (event) => {
+            const sidebar = document.getElementById('sidebar');
+            const mobileToggle = document.getElementById('mobile-toggle');
+            
+            // Only close if sidebar is open and click is outside sidebar and not on toggle button
+            if (sidebar.classList.contains('open') && 
+                !sidebar.contains(event.target) && 
+                !mobileToggle.contains(event.target)) {
+                sidebar.classList.remove('open');
+            }
+        });
+
         // Set current year
         document.getElementById('year').textContent = new Date().getFullYear();
 

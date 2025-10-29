@@ -69,6 +69,7 @@ body{
     border-radius:var(--radius-sm);
     font-weight:600;
     font-size:15px;
+    font-family:inherit;
     transition:var(--transition);
     backdrop-filter:blur(8px);
     cursor:pointer;
