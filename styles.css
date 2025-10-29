@@ -70,6 +70,7 @@ body{
     font-weight:600;
     font-size:15px;
     font-family:inherit;
+    text-align:center;
     transition:var(--transition);
     backdrop-filter:blur(8px);
     cursor:pointer;
@@ -616,9 +617,14 @@ body{
     .container{padding:0 20px}
     .site-header{padding:16px 0}
     .brand{gap:12px}
-    .logo-img{width:48px;height:48px}
-    .site-title{font-size:22px}
-    .tagline{font-size:13px}
+    .logo-img{
+        width:clamp(40px, 5vw, 48px);
+        height:clamp(40px, 5vw, 48px);
+    }
+    .site-title{
+        font-size:clamp(16px, 3vw, 22px);
+    }
+    .tagline{display:none;}
     .hero{padding:40px 0}
     .hero-inner h2{font-size:32px}
     .hero-inner p{font-size:16px}
