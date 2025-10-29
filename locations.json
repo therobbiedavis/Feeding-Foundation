@@ -252,6 +252,54 @@
       "website": "https://www.crossroadsonline.org/food-pantry",
       "lat": 33.4007667,
       "lng": -84.6841948
+    },
+    {
+      "name": "New City Church Peachtree City - City Bridges Food Pantry",
+      "address": "320 Dividend Dr Peachtree City, GA 30269",
+      "county": "Fayette",
+      "type": "Food Pantry",
+      "description": "Take what you need, leave what you can.",
+      "schedule": "Wed 10am-Noon, 2nd & 4th Saturdays 10am-Noon",
+      "website": "https://www.newcitychurch.net/citybridges",
+      "active": true,
+      "lat": 33.3819626,
+      "lng": -84.5825588
+    },
+    {
+      "name": "New City Church Fairburn - City Bridges Food Pantry",
+      "address": "3355 Old Jonesboro Rd Fairburn, GA 30213",
+      "county": "Fulton",
+      "type": "Food Pantry",
+      "description": "Take what you need, leave what you can.",
+      "schedule": "Tues 2pm-4pm, Sat 10am-Noon",
+      "website": "https://www.newcitychurch.net/citybridges",
+      "active": true,
+      "lat": 33.5540704,
+      "lng": -84.50192659999999
+    },
+    {
+      "name": "Real Life Center",
+      "address": "975 Highway 74 North, Building E, Tyrone, Georgia 30290",
+      "county": "Fayette",
+      "type": "Food Pantry",
+      "description": "Take what you need, leave what you can.",
+      "schedule": "Monday-Thursday, 9 am - noon, Thursday, 5 - 7 pm",
+      "website": "https://www.reallifecenter.org/market-and-food-pantry",
+      "active": true,
+      "lat": 33.4507431,
+      "lng": -84.5877082
+    },
+    {
+      "name": "Mobile Food Pantry hosted by Grace Church",
+      "address": "164 Flat Creek Trail, Fayetteville, Georgia",
+      "county": "Fayette",
+      "type": "Mobile Food Pantry",
+      "description": "To receive food, individuals must register and present one of the following forms of identification: - A valid Georgia driver's license - A state-issued ID - A passport Food is distributed per household address. If multiple families live at the same address, only one person from that address may register and receive food. Once a month (usually the third Thursday), Check-in begins at 8 AM, Car line begins at 10 AM (approximately), Breakfast is served from 8 AM to 10 AM",
+      "schedule": "3rd Thursday of each month at 8:00 AM - 11:15 AM",
+      "website": "https://www.reallifecenter.org/rlc-monthly-mfp",
+      "active": true,
+      "lat": 33.4461613,
+      "lng": -84.5415278
     }
   ]
 }
