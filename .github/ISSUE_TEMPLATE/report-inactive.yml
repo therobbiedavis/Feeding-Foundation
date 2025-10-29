@@ -1,0 +1,33 @@
+---
+name: Report Inactive Location
+description: Let maintainers know a listed location is closed, moved, or no longer active
+title: "Report Inactive: [Location Name]"
+labels: data-maintenance, location-review
+---
+
+## Location Information
+
+Please provide the details below to help maintainers verify and update the listing.
+
+- **Location name:**
+- **Address (if known):**
+- **County:**
+- **Why is this inactive?** (closed/relocated/no longer available)
+- **Source / verification (link, photo, phone number):**
+
+If you can, paste the JSON for the existing location here (or the details from the map):
+
+```json
+{
+  "name": "",
+  "address": "",
+  "county": "",
+  "type": "",
+  "description": "",
+  "active": false,
+  "lat": null,
+  "lng": null
+}
+```
+
+Maintainers will review reports, attempt verification, and remove or mark the location inactive in `locations.json` as appropriate.
