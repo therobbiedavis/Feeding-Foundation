@@ -72,7 +72,10 @@
     <main class="container layout">
         <aside id="sidebar" class="sidebar">
             <div class="sidebar-header">
-                <h3>Locations</h3>
+                <div class="header-row">
+                    <h3>Locations</h3>
+                    <a href="https://github.com/therobbiedavis/Feeding-Foundation/issues/new?template=report-inactive.yml" target="_blank" rel="noopener" class="report-inactive-btn">Report inactive</a>
+                </div>
                 <div class="filter-row">
                     <select id="county-select" aria-label="Select county">
                         <option value="">All Counties</option>
@@ -82,9 +85,6 @@
                     </select>
                 </div>
                 <input id="search" type="search" placeholder="Search by name or city" aria-label="Search locations">
-                <div style="margin-top:12px">
-                    <a href="https://github.com/therobbiedavis/Feeding-Foundation/issues/new?template=report-inactive.yml" target="_blank" rel="noopener" class="btn" style="padding:8px 12px;font-size:13px;background:transparent;border:1px solid rgba(31,127,99,0.06);color:var(--accent);">Report inactive location</a>
-                </div>
             </div>
             <div id="list" class="locations-list">
                 <!-- location items injected here -->
@@ -115,6 +115,6 @@
     </footer>
 
     <script src="script.js"></script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAlAuUHwDaT5lDX7JDq2KSrZNuBIdB-8S8&callback=initMap"></script>
 </body>
 </html>

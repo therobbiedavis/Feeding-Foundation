@@ -147,6 +147,102 @@ body{
     border-bottom:1px solid rgba(31,127,99,0.08);
     background:linear-gradient(180deg,rgba(247,251,249,0.5) 0%,transparent 100%);
 }
+/* header row inside sidebar (title + action) */
+.sidebar-header .header-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+}
+.report-inactive-btn{
+    padding:6px 10px;
+    font-size:13px;
+    background:transparent;
+    border:1px solid rgba(31,127,99,0.08);
+    color:var(--accent);
+    border-radius:10px;
+    font-weight:700;
+    text-decoration:none;
+    transition:var(--transition);
+}
+.report-inactive-btn:hover{
+    background:rgba(59,191,154,0.06);
+    transform:translateY(-1px);
+    box-shadow:0 4px 12px rgba(31,127,99,0.06);
+}
+
+/* Compact Google Maps InfoWindow (reduce wasted whitespace) */
+.gm-style .gm-style-iw {
+    max-width: 280px !important;
+    padding: 8px 10px !important;
+    box-sizing: border-box;
+    font-size: 14px;
+    line-height: 1.28;
+    color: var(--text);
+}
+.gm-style .gm-style-iw h3 {
+    margin: 0 0 6px 0;
+    font-size: 15px;
+    line-height: 1.1;
+    font-weight: 700;
+}
+.gm-style .gm-style-iw p {
+    margin: 0 0 6px 0;
+}
+.gm-style .gm-style-iw .muted {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 6px;
+}
+.gm-style .gm-style-iw a {
+    color: var(--accent);
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-block;
+    margin-right: 8px;
+}
+.gm-style .gm-style-iw a:hover{ text-decoration: underline; }
+
+/* Slightly smaller on narrow screens */
+@media (max-width: 520px){
+    .gm-style .gm-style-iw{ max-width: 220px !important; font-size:13px; }
+}
+
+/* Reduce default InfoWindow content gap around the close button */
+.gm-style .gm-style-iw-t::after,
+.gm-style .gm-style-iw::after,
+.gm-style .gm-style-iw-t::before,
+.gm-style .gm-style-iw::before { display:none !important; }
+
+/* Position the close button tighter and allow content to use full width */
+.gm-style .gm-style-iw {
+    padding-right: 10px !important;
+}
+.gm-style .gm-style-iw button[title="Close"],
+.gm-style .gm-style-iw button[aria-label="Close"]{
+    position: absolute !important;
+    right: 8px !important;
+    top: 8px !important;
+    width: 28px !important;
+    height: 28px !important;
+    line-height: 28px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+    border-radius: 6px !important;
+    border: none !important;
+}
+.gm-ui-hover-effect > span {
+  margin: 0 !important;
+}
+.gm-style-iw-ch {
+  padding-top: 10px !important;
+}
+
+/* Ensure the inner content doesn't leave extra right padding */
+.gm-style .gm-style-iw > div, .gm-style .gm-style-iw .gm-style-iw-d {
+    padding-right: 0 !important;
+}
 .filter-row{
     display:grid;
     grid-template-columns:1fr 1fr;
