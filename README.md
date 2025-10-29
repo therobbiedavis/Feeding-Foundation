@@ -1,17 +1,37 @@
-# Feeding Foundation
+![Feeding Foundation Logo](imgs/logo-min.png)
 
-A static website that displays food locations on a Google Map using data from a JSON file.
+Feeding Foundation is a small community-driven project that maps local food resources — food banks, pantries, soup kitchens, community gardens, and farmers markets — to help residents find support near them.
+
+## Mission
+
+Feeding Foundation's mission is to connect people in need with nearby food resources by maintaining an easy-to-use, community-curated map of services and drop-off points. We prioritize accuracy, accessibility, and community contributions.
+
+## Quick links
+
+- Live site: (deployed via GitHub Pages)
+- Add a location: `add-location.html`
+- Submit via GitHub issue: `https://github.com/therobbiedavis/Feeding-Foundation/issues/new/choose`
+
+## How it's built
+
+- Static HTML/CSS/JavaScript (no backend required for viewing)
+- Google Maps JavaScript API for maps and markers
+- Optional pre-geocoding step with `pregeocode.js` to store `lat`/`lng` in `locations.json`
+- GitHub Actions workflow for safe API key injection and deployment to GitHub Pages
+
+### Tech stack
+
+- HTML5, CSS3 (custom properties and responsive layout)
+- Vanilla JavaScript for map and UI logic
+- Google Maps JavaScript API & Geocoding API
 
 ## Setup
 
-### For Production Deployment
+### Production (GitHub Pages)
 
-1. Obtain a Google Maps API key from the [Google Cloud Console](https://console.cloud.google.com/).
-2. Enable the Maps JavaScript API and Geocoding API for your project.
-3. In your GitHub repository settings, go to Secrets and Variables > Actions, and add a new repository secret named `GOOGLE_MAPS_API_KEY` with your API key as the value.
-4. Enable GitHub Pages in your repository settings (under Pages, set source to "GitHub Actions").
-
-The deployment workflow will automatically inject the API key and deploy the site.
+1. Create a Google Maps API key and enable Maps JavaScript API and Geocoding API.
+2. Add a repository secret `GOOGLE_MAPS_API_KEY` in Settings → Secrets and Variables → Actions.
+3. The GitHub Actions workflow will inject the API key during deployment.
 
 ### For Local Development
 
@@ -22,7 +42,16 @@ The deployment workflow will automatically inject the API key and deploy the sit
 4. **Option B: Environment variable**
    - Set the environment variable: `export GOOGLE_MAPS_API_KEY="your_actual_key"`
    - Run: `sed -i "s/YOUR_API_KEY/$GOOGLE_MAPS_API_KEY/g" index.html`
-5. Open `index.html` in your web browser
+5. Run a static server from the project root (recommended — do not open files directly with file://)
+
+```bash
+# using npm http-server or serve
+npx serve -l 8000
+# or
+npx http-server -c-1
+```
+
+- Open `http://localhost:8000/` and navigate to the site.
 
 **⚠️ Important:** Never commit your API key to the repository. The placeholder `YOUR_API_KEY` in `index.html` is designed to be replaced during deployment.
 
@@ -79,22 +108,19 @@ After pre-geocoding, the app will automatically use any `lat`/`lng` fields prese
 - `locations.json`: JSON file containing location data
 - `.github/ISSUE_TEMPLATES/add-location.yml`: GitHub issue template for location submissions
 
-## Adding Locations
+## How to contribute
 
-### For Users (Community Submissions)
+We welcome community contributions of new locations and fixes.
 
-Anyone can submit new locations through our web form:
+1. Use the `Add Location` page to generate JSON for a new resource.
+2. Create a new GitHub issue using the "Add New Location" template and paste your JSON.
+3. A maintainer will review, geocode if necessary, and add approved locations to `locations.json`.
 
-1. Visit the "Add Location" page from the main site
-2. Fill out the location details form
-3. Generate the JSON data
-4. Copy the JSON and submit it as a [GitHub issue](https://github.com/therobbiedavis/Feeding-Foundation/issues/new/choose)
+Maintainers can also add locations directly to `locations.json` or use `pregeocode.js` to batch-geocode.
 
-A maintainer will review and add approved locations to the database.
+## Data format (locations.json)
 
-### For Maintainers
-
-Edit `locations.json` to add new locations. Each location should have:
+Each location is an object with these keys:
 
 ```json
 {
@@ -109,51 +135,30 @@ Edit `locations.json` to add new locations. Each location should have:
 }
 ```
 
-#### Using the Helper Script
+Required fields: `name`, `address`, `county`, `type`.
+Optional: `description`, `active` (default true), and `lat`/`lng` (recommended to pre-geocode).
 
-For processing community submissions from GitHub issues:
+## Usage
 
-```bash
-node add-location.js '{"name":"New Location","address":"123 Main St","county":"Coweta","type":"Food Bank","description":"Community food bank"}'
-```
+- Open the site and use the sidebar filters (county/type) or search to find resources.
+- Click a marker or list item for details and directions.
 
-This will validate and add the location to `locations.json`.
+## File structure
 
-#### Required Fields:
-- `name`: Location name
-- `address`: Full address
-- `county`: County name
-- `type`: Location type
+- `index.html` — Main map + list UI
+- `add-location.html` — Community submission helper
+- `styles.css` — Visual styles
+- `script.js` — Map and UI logic
+- `add-location.js` — Helper for processing submissions
+- `pregeocode.js` — Batch geocoding helper
+- `locations.json` — Data store for locations
+- `.github/ISSUE_TEMPLATE/add-location.yml` — Issue template for submissions
 
-#### Optional Fields:
-- `description`: Brief description
-- `active`: Boolean indicating if location is operational (default: true)
-- `lat`/`lng`: Coordinates (will be auto-geocoded if not provided)
+## Testing & deploying
 
-#### Location Types:
-- `Little Free Pantry`
-- `Food Bank`
-- `Soup Kitchen`
-- `Community Garden`
-- `Farmers Market`
-- `Other`
+- Deploys via GitHub Actions to GitHub Pages. The workflow injects the API key from Actions secrets.
+- For local testing, run a static server (see above).
 
-#### Managing Inactive Locations
+## License
 
-To mark a location as inactive (e.g., if it closes), set the `active` field to `false`:
-
-```json
-{
-  "name": "Old Location",
-  "active": false,
-  ...
-}
-```
-
-Inactive locations will not appear on the map or in search results.
-
-## Hosting
-
-This website is configured for automatic deployment to GitHub Pages. Once you set up the API key secret and enable Pages, pushes to the main branch will trigger deployment.
-
-Alternatively, you can host it on other static site hosts like Netlify or Vercel by uploading the files directly.
+This project is open-source.
