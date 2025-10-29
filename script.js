@@ -83,6 +83,25 @@ function initMap() {
             filterLocations();
         });
 
+        // Open now filter
+        const openNowFilter = document.getElementById('open-now-filter');
+        if (openNowFilter) {
+            openNowFilter.addEventListener('change', () => {
+                filterLocations();
+            });
+        }
+
+        // Filters toggle (collapsible filters container)
+        const filtersToggle = document.getElementById('filters-toggle');
+        const filtersContainer = document.getElementById('filters-container');
+        if (filtersToggle && filtersContainer) {
+            filtersToggle.addEventListener('click', () => {
+                const collapsed = filtersContainer.classList.toggle('collapsed');
+                // aria-expanded should reflect the visible state
+                filtersToggle.setAttribute('aria-expanded', String(!collapsed));
+            });
+        }
+
         // Load locations from JSON
         loadLocations();
     } catch (error) {
@@ -161,9 +180,13 @@ function populateLocations(list) {
             const directionsLink = `https://www.google.com/maps/dir/?api=1&destination=${dest}`;
 
             const locationJson = encodeURIComponent(JSON.stringify(location, null, 2));
+            const isOpen = isLocationOpenNow(location.schedule);
+            const statusText = isOpen === true ? '<span style="color: #22c55e; font-weight: bold;">● Currently Open</span>' : 
+                              isOpen === false ? '<span style="color: #ef4444; font-weight: bold;">● Currently Closed</span>' : '';
+            
             const infoContent = `
                 <h3>${escapeHtml(location.name)}</h3>
-                <p><strong>${escapeHtml(location.type)}</strong></p>
+                <p><strong>${escapeHtml(location.type)}</strong> ${statusText}</p>
                 <p>${escapeHtml(location.description || '')}</p>
                 ${location.schedule ? `<p><em>${escapeHtml(location.schedule)}</em></p>` : ''}
                 <p class="muted"><em>${escapeHtml(location.address || (location.lat+','+location.lng))}</em></p>
@@ -202,11 +225,15 @@ function populateLocations(list) {
 
 function makeListItem(location, idx) {
     const locationJson = encodeURIComponent(JSON.stringify(location, null, 2));
+    const isOpen = isLocationOpenNow(location.schedule);
+    const statusIndicator = isOpen === true ? '<span class="status-indicator open">● Open now</span>' : 
+                           isOpen === false ? '<span class="status-indicator closed">● Closed</span>' : '';
+    
     const el = document.createElement('div');
     el.className = 'location-item';
     el.dataset.index = idx;
     el.innerHTML = `
-        <div class="location-name">${escapeHtml(location.name)}</div>
+        <div class="location-name">${escapeHtml(location.name)} ${statusIndicator}</div>
         <div class="location-type" style="font-size: 13px; color: var(--accent-3); font-weight: 600; margin-bottom: 4px;">${escapeHtml(location.type)}</div>
         <div class="location-address">${escapeHtml(location.address)}</div>
         ${location.schedule ? `<div style="font-size: 13px; color: var(--muted); margin: 4px 0; font-style: italic;">${escapeHtml(location.schedule)}</div>` : ''}
@@ -256,6 +283,7 @@ function highlightListItem(idx) {
 
 function filterLocations() {
     const searchQuery = document.getElementById('search').value.trim().toLowerCase();
+    const openNowOnly = document.getElementById('open-now-filter').checked;
     
     let filtered = locationsData;
     
@@ -277,6 +305,14 @@ function filterLocations() {
         filtered = filtered.filter(loc => {
             return loc.name.toLowerCase().includes(searchQuery) || 
                    (loc.address && loc.address.toLowerCase().includes(searchQuery));
+        });
+    }
+    
+    // Filter by open now status
+    if (openNowOnly) {
+        filtered = filtered.filter(loc => {
+            const isOpen = isLocationOpenNow(loc.schedule);
+            return isOpen === true;
         });
     }
     
@@ -329,6 +365,11 @@ function parseSchedule(scheduleText) {
         return { type: 'appointment' };
     }
 
+    // Handle monthly patterns (first Saturday, etc.)
+    if (text.includes('first saturday') || text.includes('first of each month') || text.includes('monthly')) {
+        return { type: 'monthly', original: scheduleText };
+    }
+
     // Try to parse day and time information
     const schedule = { type: 'scheduled', days: [], times: [] };
 
@@ -356,29 +397,36 @@ function parseSchedule(scheduleText) {
         schedule.days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
     }
 
-    // Parse time ranges (basic implementation)
-    const timeRegex = /(\d{1,2})(?::(\d{2}))?\s*(am|pm)?\s*[-–]\s*(\d{1,2})(?::(\d{2}))?\s*(am|pm)?/g;
+    // Parse time ranges (enhanced to handle multiple ranges and single times)
+    const timeRegex = /(\d{1,2})(?::(\d{2}))?\s*(am|pm)?(?:\s*[-–]\s*(\d{1,2})(?::(\d{2}))?\s*(am|pm)?)?/g;
     let match;
     while ((match = timeRegex.exec(text)) !== null) {
         const startHour = parseInt(match[1]);
         const startMinute = match[2] ? parseInt(match[2]) : 0;
         const startPeriod = match[3];
-        const endHour = parseInt(match[4]);
+        const endHour = match[4] ? parseInt(match[4]) : null;
         const endMinute = match[5] ? parseInt(match[5]) : 0;
         const endPeriod = match[6];
 
-        // Convert to 24-hour format
+        // Convert start time to 24-hour format
         let start24 = startHour;
-        let end24 = endHour;
-
         if (startPeriod === 'pm' && startHour !== 12) start24 += 12;
         if (startPeriod === 'am' && startHour === 12) start24 = 0;
-        if (endPeriod === 'pm' && endHour !== 12) end24 += 12;
-        if (endPeriod === 'am' && endHour === 12) end24 = 0;
+
+        let end24;
+        if (endHour !== null) {
+            // We have an end time
+            end24 = endHour;
+            if (endPeriod === 'pm' && endHour !== 12) end24 += 12;
+            if (endPeriod === 'am' && endHour === 12) end24 = 0;
+        } else {
+            // No end time specified, assume 4 hour duration for single times
+            end24 = start24 + 4;
+        }
 
         schedule.times.push({
             start: start24 * 60 + startMinute,
-            end: end24 * 60 + endMinute
+            end: end24 * 60 + (endHour === null ? 0 : endMinute)
         });
     }
 
@@ -400,7 +448,7 @@ function isLocationOpenNow(scheduleText) {
     if (!schedule) return null;
 
     const now = new Date();
-    const currentDay = now.toLocaleLowerCase().substring(0, 3); // 'mon', 'tue', etc.
+    const currentDay = now.toLocaleDateString('en-US', { weekday: 'short' }).toLowerCase();
     const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
     switch (schedule.type) {
@@ -408,6 +456,16 @@ function isLocationOpenNow(scheduleText) {
             return true;
         case 'appointment':
             return null; // Unknown - requires appointment
+        case 'monthly':
+            // Handle monthly schedules like "First Saturday of each month"
+            if (schedule.original.toLowerCase().includes('first saturday')) {
+                const dayOfMonth = now.getDate();
+                const dayOfWeek = now.getDay(); // 0 = Sunday, 6 = Saturday
+                // Check if it's Saturday and the date is between 1-7 (first week)
+                return dayOfWeek === 6 && dayOfMonth <= 7;
+            }
+            // For other monthly patterns, we can't determine without more complex logic
+            return null;
         case 'complex':
         case 'unknown':
             return null; // Can't determine

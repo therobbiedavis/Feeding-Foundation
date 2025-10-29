@@ -16,6 +16,7 @@
       "county": "Coweta",
       "type": "Little Free Pantry",
       "description": "Take what you need, leave what you can.",
+      "schedule": "24/7 access",
       "lat": 33.3818052,
       "lng": -84.783293
     },
@@ -25,6 +26,7 @@
       "county": "Coweta",
       "type": "Little Free Pantry",
       "description": "Take what you need, leave what you can.",
+      "schedule": "24/7 access",
       "lat": 33.3750636,
       "lng": -84.7944718
     },
@@ -34,6 +36,7 @@
       "county": "Coweta",
       "type": "Little Free Pantry",
       "description": "Take what you need, leave what you can.",
+      "schedule": "24/7 access",
       "lat": 33.3813419,
       "lng": -84.791761
     },
@@ -43,6 +46,7 @@
       "county": "Coweta",
       "type": "Little Free Pantry",
       "description": "Take what you need, leave what you can.",
+      "schedule": "24/7 access",
       "lat": 33.4057761,
       "lng": -84.9182526
     },
@@ -52,6 +56,7 @@
       "county": "Coweta",
       "type": "Little Free Pantry",
       "description": "Take what you need, leave what you can.",
+      "schedule": "24/7 access",
       "lat": 33.3677075,
       "lng": -84.7941683
     },
@@ -61,6 +66,7 @@
       "county": "Coweta",
       "type": "Little Free Pantry",
       "description": "Take what you need, leave what you can.",
+      "schedule": "24/7 access",
       "lat": 33.5047542,
       "lng": -84.6951644
     },
@@ -70,6 +76,7 @@
       "county": "Coweta",
       "type": "Little Free Pantry",
       "description": "Take what you need, leave what you can.",
+      "schedule": "24/7 access",
       "lat": 33.4059494,
       "lng": -84.6979928
     },
@@ -79,6 +86,7 @@
       "county": "Coweta",
       "type": "Little Free Pantry",
       "description": "Take what you need, leave what you can.",
+      "schedule": "24/7 access",
       "lat": 33.3329027,
       "lng": -84.7835679
     },
@@ -88,6 +96,7 @@
       "county": "Coweta",
       "type": "Little Free Pantry",
       "description": "Take what you need, leave what you can.",
+      "schedule": "24/7 access",
       "lat": 33.2919971,
       "lng": -84.8298686
     },
@@ -97,6 +106,7 @@
       "county": "Coweta",
       "type": "Little Free Pantry",
       "description": "Take what you need, leave what you can.",
+      "schedule": "24/7 access",
       "lat": 33.3719911,
       "lng": -84.64162139999999
     },
@@ -106,6 +116,7 @@
       "county": "Coweta",
       "type": "Little Free Pantry",
       "description": "Take what you need, leave what you can.",
+      "schedule": "24/7 access",
       "lat": 33.4006556,
       "lng": -84.79306760000001
     },
@@ -115,6 +126,7 @@
       "county": "Coweta",
       "type": "Little Free Pantry",
       "description": "Take what you need, leave what you can.",
+      "schedule": "24/7 access",
       "lat": 33.2863525,
       "lng": -84.7685607
     },
@@ -124,6 +136,7 @@
       "county": "Coweta",
       "type": "Little Free Pantry",
       "description": "Take what you need, leave what you can.",
+      "schedule": "24/7 access",
       "lat": 33.3004662,
       "lng": -84.5515061
     },
@@ -133,8 +146,73 @@
       "county": "Coweta",
       "type": "Little Free Pantry",
       "description": "Take what you need, leave what you can.",
+      "schedule": "24/7 access",
       "lat": 33.3945026,
       "lng": -84.8128263
+    },
+    {
+      "name": "BTG Community Outreach (Bridging the Gap)",
+      "address": "19 First Ave, Newnan, GA 30263",
+      "county": "Coweta",
+      "type": "Food Distribution",
+      "description": "Offers food distribution on Wednesdays at 4:30 p.m. and Saturdays at 8 a.m. They also provide home delivery for residents who are shut-in or lack transportation.",
+      "schedule": "Wednesdays 4:30 PM, Saturdays 8:00 AM"
+    },
+    {
+      "name": "Coweta Community Food Pantry (One Roof Outreach)",
+      "address": "255 Temple Ave, Newnan, GA 30263",
+      "county": "Coweta",
+      "type": "Food Pantry",
+      "description": "Open on Mondays, Wednesdays, and Fridays from 1–4 p.m. Patrons can pick up food boxes twice a month.",
+      "schedule": "Mondays, Wednesdays, Fridays 1:00 PM - 4:00 PM"
+    },
+    {
+      "name": "First Baptist Church (A.O. Mission Center)",
+      "address": "15 W. Washington St, Newnan, GA 30263",
+      "county": "Coweta",
+      "type": "Food Pantry",
+      "description": "Provides food assistance on Mondays, Tuesdays, and Wednesdays from 9–11 a.m.",
+      "schedule": "Mondays, Tuesdays, Wednesdays 9:00 AM - 11:00 AM"
+    },
+    {
+      "name": "The Salvation Army Newnan Service Center",
+      "address": "670 Jefferson St, Newnan, GA 30263",
+      "county": "Coweta",
+      "type": "Food Pantry",
+      "description": "Hosts a food pantry on Tuesdays and Thursdays from 9:30 a.m. to 12 p.m. A photo ID and completed paperwork are required.",
+      "schedule": "Tuesdays, Thursdays 9:30 AM - 12:00 PM"
+    },
+    {
+      "name": "The I-58 Mission",
+      "address": "2450 GA-85, Senoia, GA 30276",
+      "county": "Coweta",
+      "type": "Food Distribution",
+      "description": "Distributes food on Thursdays from 9:30 a.m. to 2:30 p.m.",
+      "schedule": "Thursdays 9:30 AM - 2:30 PM"
+    },
+    {
+      "name": "Yeager Road Community Resource Center",
+      "address": "265 Yeager Rd, Newnan, GA 30263",
+      "county": "Coweta",
+      "type": "Mobile Food Pantry",
+      "description": "Offers a mobile food pantry on the first Saturday of each month.",
+      "schedule": "First Saturday of each month"
+    },
+    {
+      "name": "Newnan City Police Department Little Free Pantry",
+      "address": "Newnan City Police Department parking lot, Newnan, GA 30263",
+      "county": "Coweta",
+      "type": "Little Free Pantry",
+      "description": "Free 24-hour little pantry available for emergency needs.",
+      "schedule": "24/7 access"
+    },
+    {
+      "name": "Crossroads Church Little Free Pantry",
+      "address": "2564 Highway 154, Newnan, GA 30263",
+      "county": "Coweta",
+      "type": "Little Free Pantry",
+      "description": "Free 24-hour little pantry available for emergency needs.",
+      "schedule": "24/7 access"
     }
   ]
 }

@@ -71,20 +71,32 @@
 
     <main class="container layout">
         <aside id="sidebar" class="sidebar">
-            <div class="sidebar-header">
+                <div class="sidebar-header">
                 <div class="header-row">
                     <h3>Locations</h3>
-                    <a href="https://github.com/therobbiedavis/Feeding-Foundation/issues/new?template=report-inactive.yml" target="_blank" rel="noopener" class="report-inactive-btn">Report inactive</a>
+                    <button id="filters-toggle" class="filters-toggle" aria-expanded="false" aria-controls="filters-container" title="Show or hide filters">
+                        <span>Filters</span><svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6,9 12,15 18,9"></polyline>
+                        </svg>
+                    </button>
                 </div>
-                <div class="filter-row">
-                    <select id="county-select" aria-label="Select county">
-                        <option value="">All Counties</option>
-                    </select>
-                    <select id="type-select" aria-label="Select type">
-                        <option value="">All Types</option>
-                    </select>
+                <div id="filters-container" class="filters-container collapsed">
+                    <div class="filter-row">
+                        <select id="county-select" aria-label="Select county">
+                            <option value="">All Counties</option>
+                        </select>
+                        <select id="type-select" aria-label="Select type">
+                            <option value="">All Types</option>
+                        </select>
+                    </div>
+                    <input id="search" type="search" placeholder="Search by name or city" aria-label="Search locations">
+                    <div class="filter-open-now">
+                        <label for="open-now-filter" class="open-now-label" title="Show only locations currently open. Note: Schedule parsing is basic and may not handle complex or appointment-based hours accurately.">
+                            <input type="checkbox" id="open-now-filter" class="open-now-checkbox" aria-label="Show only locations open now">
+                            <span class="open-now-text">Show only locations open now</span>
+                        </label>
+                    </div>
                 </div>
-                <input id="search" type="search" placeholder="Search by name or city" aria-label="Search locations">
             </div>
             <div id="list" class="locations-list">
                 <!-- location items injected here -->
@@ -115,6 +127,6 @@
     </footer>
 
     <script src="script.js"></script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBZm9FN1bAY_yRC88WN4iR1SGLlvfRSLrc&callback=initMap"></script>
 </body>
 </html>
