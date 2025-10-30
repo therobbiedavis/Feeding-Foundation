@@ -396,6 +396,36 @@
       "schedule": "Thursdays, 9 a.m.–12 p.m.",
       "website": null,
       "active": true
+    },
+    {
+      "name": "Spirit-Filled Ministries, Inc.",
+      "type": "Little Free Pantry",
+      "address": "222 Johnson St, Hogansville, GA 30230",
+      "city": "Hogansville",
+      "state": "GA",
+      "zip": "30230",
+      "county": "Troup",
+      "lat": 33.1743474,
+      "lng": -84.9110919,
+      "description": "Blessing box / little free pantry. Take what you need, leave what you can.",
+      "schedule": "24/7 access",
+      "website": "",
+      "active": true
+    },
+    {
+      "name": "Hogansville First United Methodist Church",
+      "type": "Little Free Pantry",
+      "address": "414 E Main St, Hogansville, GA 30230",
+      "city": "Hogansville",
+      "state": "GA",
+      "zip": "30230",
+      "county": "Troup",
+      "lat": 33.1729956,
+      "lng": -84.9122484,
+      "description": "Blessing box / little free pantry located at the church. Take what you need, leave what you can.",
+      "schedule": "24/7 access",
+      "website": "",
+      "active": true
     }
   ]
 }
