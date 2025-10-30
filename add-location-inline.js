@@ -316,12 +316,22 @@
             const stateField = document.getElementById('state');
             const zipField = document.getElementById('zip');
             const countyField = document.getElementById('county');
-            if (cityField && !cityField.dataset.manual) cityField.value = toTitleCase(parsed.city || '');
+            if (cityField && !cityField.dataset.manual) {
+                cityField.value = toTitleCase(parsed.city || '');
+                cityField.removeAttribute('disabled');
+            }
             if (stateField && !stateField.dataset.manual){
                 stateField.value = normalizeStateAbbr(pState || '');
+                stateField.removeAttribute('disabled');
             }
-            if (zipField && !zipField.dataset.manual) zipField.value = parsed.zip || '';
-            if (countyField && !countyField.dataset.manual) countyField.value = toTitleCase(normalizeCounty(pCounty) || (parsed.county || ''));
+            if (zipField && !zipField.dataset.manual) {
+                zipField.value = parsed.zip || '';
+                zipField.removeAttribute('disabled');
+            }
+            if (countyField && !countyField.dataset.manual) {
+                countyField.value = toTitleCase(normalizeCounty(pCounty) || (parsed.county || ''));
+                countyField.removeAttribute('disabled');
+            }
         }
 
         async function scheduleGeocodeForAddress(address){
@@ -337,16 +347,51 @@
                     // Use a best-effort geocode: try Nominatim first, then supplement missing fields with Google
                     const res = await geocodeBestEffort(address);
                     const foundCity = res && (res.city || res.town || res.village || res.hamlet || res.neighbourhood || res.neighborhood || res.locality || res.neighbourhood);
-                    if (foundCity && (!cityField.dataset.manual)) cityField.value = toTitleCase(foundCity);
+                    if (foundCity && (!cityField.dataset.manual)) {
+                        cityField.value = toTitleCase(foundCity);
+                    }
+                    cityField.removeAttribute('disabled');
                     if (res.state && (!stateField.dataset.manual)){
                         stateField.value = normalizeStateAbbr(res.state);
                     }
-                    if (res.postcode && (!zipField.dataset.manual)) zipField.value = res.postcode;
-                    if (res.county && (!countyField.dataset.manual)) countyField.value = toTitleCase(normalizeCounty(res.county) || countyField.value);
+                    stateField.removeAttribute('disabled');
+                    if (res.postcode && (!zipField.dataset.manual)) {
+                        zipField.value = res.postcode;
+                    }
+                    zipField.removeAttribute('disabled');
+                    if (res.county && (!countyField.dataset.manual)) {
+                        countyField.value = toTitleCase(normalizeCounty(res.county) || countyField.value);
+                    }
+                    countyField.removeAttribute('disabled');
                     if (res.lat) document.getElementById('lat').value = res.lat;
                     if (res.lng) document.getElementById('lng').value = res.lng;
+                    // Show the inferred fields section when inferring is complete
+                    const fieldsDiv = document.getElementById('parsed-address-fields');
+                    if (fieldsDiv && !fieldsDiv.classList.contains('expanded')) {
+                        fieldsDiv.style.display = 'block';
+                        // Use setTimeout to trigger the animation after display is set
+                        setTimeout(() => { fieldsDiv.classList.add('expanded'); updateToggleHr(); }, 20);
+                    } else {
+                        updateToggleHr();
+                    }
                     if (statusEl) statusEl.textContent = 'Prefilled fields from geocoder';
-                }catch(err){ if (statusEl) statusEl.textContent = 'Geocode failed'; }
+                }catch(err){ 
+                    // Enable fields even if geocoding failed
+                    cityField.removeAttribute('disabled');
+                    stateField.removeAttribute('disabled');
+                    zipField.removeAttribute('disabled');
+                    countyField.removeAttribute('disabled');
+                    // Show the inferred fields section even on failure since fields are enabled
+                    const fieldsDiv = document.getElementById('parsed-address-fields');
+                    if (fieldsDiv && !fieldsDiv.classList.contains('expanded')) {
+                        fieldsDiv.style.display = 'block';
+                        // Use setTimeout to trigger the animation after display is set
+                        setTimeout(() => { fieldsDiv.classList.add('expanded'); updateToggleHr(); }, 20);
+                    } else {
+                        updateToggleHr();
+                    }
+                    if (statusEl) statusEl.textContent = 'Geocode failed'; 
+                }
                 generateLocationData(); checkFormValidity();
             }, GEOCODE_DEBOUNCE_MS);
         }
@@ -485,6 +530,56 @@
         document.getElementById('year').textContent = new Date().getFullYear();
         generateLocationData();
         checkFormValidity();
+
+        // Manual toggle for additional fields
+        const toggleHr = document.getElementById('toggle-fields-hr');
+        const fieldsDiv = document.getElementById('parsed-address-fields');
+        
+        function updateToggleHr() {
+            // Always keep the toggle visible so users can collapse after expansion
+            const liveEl = document.getElementById('parsed-fields-status');
+            if (fieldsDiv.classList.contains('expanded')) {
+                toggleHr.classList.add('expanded');
+                toggleHr.setAttribute('aria-expanded', 'true');
+                toggleHr.title = 'Hide additional fields';
+                // rotate the inner wrapper explicitly for cross-browser reliability
+                const chevWrap = toggleHr.querySelector('.chev-wrap');
+                if (chevWrap) chevWrap.classList.add('rotated');
+                if (liveEl) liveEl.textContent = 'Additional fields expanded. City, State, ZIP, and County are now editable.';
+            } else {
+                toggleHr.classList.remove('expanded');
+                toggleHr.setAttribute('aria-expanded', 'false');
+                toggleHr.title = 'Show additional fields';
+                const chevWrap = toggleHr.querySelector('.chev-wrap');
+                if (chevWrap) chevWrap.classList.remove('rotated');
+                if (liveEl) liveEl.textContent = 'Additional fields hidden.';
+            }
+            // Ensure visible regardless of auto/manual expansion state
+            try { toggleHr.style.display = 'block'; } catch(e){}
+        }
+        
+        toggleHr.addEventListener('click', () => {
+            if (fieldsDiv.classList.contains('expanded')) {
+                // Hide fields
+                fieldsDiv.classList.remove('expanded');
+                setTimeout(() => {
+                    if (!fieldsDiv.classList.contains('expanded')) {
+                        fieldsDiv.style.display = 'none';
+                    }
+                }, 400); // Match transition duration
+            } else {
+                // Show fields
+                fieldsDiv.style.display = 'block';
+                setTimeout(() => {
+                    fieldsDiv.classList.add('expanded');
+                    updateToggleHr();
+                }, 20);
+                return; // update already called after expansion
+            }
+            updateToggleHr();
+        });
+        
+        // Note: expansion logic calls updateToggleHr() after auto-expansion so the chevron updates
 
         // small focus animation
         document.querySelectorAll('input, select, textarea').forEach(el => {

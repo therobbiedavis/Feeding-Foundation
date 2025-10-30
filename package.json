@@ -6,7 +6,8 @@
     "minify-css": "cleancss styles.css -o styles.min.css && cleancss add-location-inline.css -o add-location-inline.min.css",
     "minify-js": "terser script.js -o script.min.js --compress --mangle && terser add-location-inline.js -o add-location-inline.min.js --compress --mangle",
     "minify": "npm run minify-css && npm run minify-js",
-    "build": "npm run minify"
+    "build": "npm run minify",
+    "serve": "npx serve -l 8000"
   },
   "devDependencies": {
     "clean-css-cli": "^5.6.3",

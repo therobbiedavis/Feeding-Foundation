@@ -598,6 +598,23 @@ body{
     border-color:var(--accent-3);
     box-shadow:0 0 0 4px rgba(59,191,154,0.12);
 }
+.form-group input:disabled,
+.form-group select:disabled,
+.form-group textarea:disabled{
+    background:#f8faf9;
+    border-color:#d1d9db;
+    color:#9ca3af;
+    cursor:not-allowed;
+    opacity:0.7;
+}
+#parsed-address-fields{
+    max-height: 0;
+}
+#parsed-address-fields.expanded{
+    max-height: 200px; /* Adjust based on content height */
+    padding-top: 24px;
+    padding-bottom: 12px;
+}
 .form-group textarea{min-height:100px;resize:vertical;line-height:1.6}
 .form-group input[type="checkbox"]{
     /* compact inline checkbox to match app styles */
@@ -790,6 +807,90 @@ body{
     color:var(--accent-3);
 }
 
+/* Toggle Fields HR with Chevron */
+.toggle-fields-hr{
+    position: relative;
+    border: none;
+    /* spacing controlled by padding rather than margin */
+    padding: 12px 0;
+    cursor: pointer;
+}
+.toggle-fields-hr::before{
+    /* horizontal rule behind the chevron */
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 1px;
+    background: rgba(31,127,99,0.12);
+    z-index: 1;
+}
+.toggle-fields-hr .chev-wrap{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(0deg);
+    width: 36px;
+    height: 36px;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    padding: 4px 6px;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    pointer-events: none;
+    transform-origin: 50% 50%;
+    transition: transform ease-in-out 0.3s;
+}
+.toggle-fields-hr .chev{
+    display:block;
+    width: 28px;
+    height: 28px;
+    color: var(--accent-3);
+}
+.toggle-fields-hr:hover::before{
+    background: rgba(31,127,99,0.18);
+}
+.toggle-fields-hr.expanded .chev-wrap{
+    transform: translate(-50%, -50%) rotate(180deg);
+}
+
+/* Fallback: explicit rotated class on the wrapper to ensure rotation works in all browsers */
+.toggle-fields-hr .chev-wrap.rotated{
+    transform: translate(-50%, -50%) rotate(180deg);
+}
+
+/* Parsed/inferred fields styling */
+#parsed-address-fields{
+    display: none; /* hidden by default */
+    overflow: hidden;
+    max-height: 0;
+    padding: 0 0;
+    background: transparent;
+    border-radius: 10px;
+    transition: max-height 0.35s cubic-bezier(0.2,0,0,1), padding 0.28s ease, background-color 0.25s ease;
+    margin-top: 8px;
+}
+
+#parsed-address-fields.expanded{
+    display: block;
+    max-height: 240px; /* big enough for the fields content */
+    padding: 12px 12px 16px 12px;
+    background: linear-gradient(180deg, rgba(59,191,154,0.03), rgba(31,127,99,0.02));
+    border: 1px solid rgba(31,127,99,0.06);
+    box-shadow: 0 6px 18px rgba(9,30,27,0.03);
+}
+
+/* Make the chevron rotate smoothly around its center */
+.toggle-fields-hr .chev{
+    transform-origin: 50% 50%;
+    transition: transform 0.26s cubic-bezier(0.2, 0, 0, 1), opacity 0.12s ease;
+}
+
 /* Animations */
 @keyframes spin{
     from{transform:translateY(-50%) rotate(0deg)}
@@ -874,6 +975,9 @@ input[type="checkbox"]:focus-visible{
     outline:2px solid var(--accent-3);
     outline-offset:3px;
 }
+
+/* Utility: visually-hidden for screen-reader only text */
+.visually-hidden{position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap;border:0;padding:0;margin:-1px}
 
 /* Sidebar Footer */
 .sidebar-footer{

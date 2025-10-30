@@ -209,6 +209,16 @@ function initMap() {
 
         // Load locations from JSON
         loadLocations();
+
+        // Attempt to center map on user's location on initial load (best-effort)
+        try {
+            // Delay slightly to allow map to render & controls to initialize
+            setTimeout(() => {
+                locateUser();
+            }, 500);
+        } catch (e) {
+            // locateUser has its own error handling; swallow any unexpected exceptions here
+        }
     } catch (error) {
         showApiError();
     }

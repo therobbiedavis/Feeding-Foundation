@@ -87,25 +87,37 @@
                         </div>
                 </div>
 
-                <div class="form-group" id="parsed-address-fields" style="display:block;">
+                <button type="button" id="toggle-fields-hr" class="toggle-fields-hr" aria-expanded="false" aria-controls="parsed-address-fields" title="Show additional fields" style="display:block; width:100%; border:none; background:transparent; padding:12px 0; margin-bottom:20px;">
+                    <!-- inline SVG chevron for crisper rotation -->
+                    <span class="chev-wrap" aria-hidden="true">
+                        <svg class="chev" width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </span>
+                </button>
+
+                <!-- ARIA live region for screen-reader announcements about expanded/collapsed state -->
+                <div id="parsed-fields-status" class="visually-hidden" role="status" aria-live="polite" aria-atomic="true"></div>
+
+                <div class="form-group" id="parsed-address-fields">
                     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-                        <div>
+                        <div class="parsed-field" style="--delay:0.04s;">
                             <label for="city">City</label>
-                            <input type="text" id="city" placeholder="City or town">
+                            <input type="text" id="city" placeholder="City or town" disabled>
                         </div>
-                        <div>
+                        <div class="parsed-field" style="--delay:0.08s;">
                             <label for="state">State (ABBR)</label>
-                            <input type="text" id="state" placeholder="State (e.g., GA)">
+                            <input type="text" id="state" placeholder="State (e.g., GA)" disabled>
                         </div>
                     </div>
                     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-top:12px;">
-                        <div>
+                        <div class="parsed-field" style="--delay:0.12s;">
                             <label for="zip">ZIP</label>
-                            <input type="text" id="zip" placeholder="ZIP or postal code">
+                            <input type="text" id="zip" placeholder="ZIP or postal code" disabled>
                         </div>
-                        <div>
+                        <div class="parsed-field" style="--delay:0.16s;">
                             <label for="county">County</label>
-                            <input type="text" id="county" placeholder="County (optional)">
+                            <input type="text" id="county" placeholder="County (optional)" disabled>
                         </div>
                     </div>
                 </div>
