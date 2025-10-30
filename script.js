@@ -8,6 +8,45 @@ let selectedCounty = '';
 let selectedType = '';
 let selectedState = '';
 let isUpdatingDropdowns = false;
+// Whether sidebar should be filtered to map viewport. Persisted in localStorage.
+let sidebarFilterEnabled = (function(){
+    try { const v = localStorage.getItem('sidebarFilterEnabled'); return v === null ? true : v === 'true'; } catch(e){ return true; }
+})();
+
+// Persist an explicit default so first-time visitors have the filter enabled
+// and subsequent runs read the persisted preference. We only set this when
+// the key is absent to avoid overriding an existing user choice.
+try {
+    if (typeof localStorage !== 'undefined' && localStorage.getItem('sidebarFilterEnabled') === null) {
+        localStorage.setItem('sidebarFilterEnabled', 'true');
+    }
+} catch (e) {
+    // ignore - some browsers or privacy modes may throw when accessing localStorage
+}
+
+function setSidebarFilterEnabled(enabled){
+    sidebarFilterEnabled = !!enabled;
+    try { localStorage.setItem('sidebarFilterEnabled', sidebarFilterEnabled ? 'true' : 'false'); } catch(e){}
+    // Update UI immediately
+    if (sidebarFilterEnabled) updateSidebarToMapBounds(); else showAllSidebarItems();
+}
+
+function toggleSidebarFilter(){ setSidebarFilterEnabled(!sidebarFilterEnabled); updateToggleControlUi(); }
+
+function showAllSidebarItems(){
+    const items = document.querySelectorAll('.location-item');
+    items.forEach(item => { item.classList.remove('out-of-view'); item.removeAttribute('aria-hidden'); });
+}
+
+function updateToggleControlUi(){
+    const el = document.getElementById('map-filter-toggle');
+    if (!el) return;
+    el.setAttribute('aria-pressed', sidebarFilterEnabled ? 'true' : 'false');
+    const title = sidebarFilterEnabled ? 'Hide Non-visible Locations' : 'Show Non-visible Locations';
+    el.title = title;
+    el.setAttribute('aria-label', title);
+    el.classList.toggle('enabled', sidebarFilterEnabled);
+}
 
 // Mapping of US state names to their USPS abbreviations
 const STATE_NAME_TO_ABBR = {
@@ -92,10 +131,38 @@ function initMap() {
                 <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3c-.46-4.17-3.77-7.48-7.94-7.94V1h-2v2.06C6.83 3.52 3.52 6.83 3.06 11H1v2h2.06c.46 4.17 3.77 7.48 7.94 7.94V23h2v-2.06c4.17-.46 7.48-3.77 7.94-7.94H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/>
             </svg>
         `;
-        locateControlDiv.addEventListener('click', () => {
-            locateUser();
-        });
+        locateControlDiv.addEventListener('click', () => { locateUser(); });
         map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(locateControlDiv);
+
+        // Add a toggle control to enable/disable filtering the sidebar to the map viewport
+        const toggleControlDiv = document.createElement('div');
+        toggleControlDiv.className = 'map-control map-filter-toggle';
+        toggleControlDiv.id = 'map-filter-toggle';
+        toggleControlDiv.setAttribute('role', 'button');
+        toggleControlDiv.setAttribute('tabindex', '0');
+        toggleControlDiv.setAttribute('aria-pressed', sidebarFilterEnabled ? 'true' : 'false');
+        // Use an eye icon. Tooltip text will be updated by updateToggleControlUi()
+        toggleControlDiv.title = sidebarFilterEnabled ? 'Hide Non-visible Locations' : 'Show Non-visible Locations';
+        toggleControlDiv.setAttribute('aria-label', toggleControlDiv.title);
+        // Include both open and closed eye SVGs; toggle visibility via CSS so only the graphic changes
+        toggleControlDiv.innerHTML = `
+            <svg class="eye-open" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" width="20" height="20">
+                <path d="M12 5C7.03 5 3.16 7.99 2 12c1.16 4.01 5.03 7 10 7s8.84-2.99 10-7c-1.16-4.01-5.03-7-10-7zm0 12a5 5 0 110-10 5 5 0 010 10z"/>
+                <circle cx="12" cy="12" r="3" />
+            </svg>
+            <svg class="eye-closed" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" width="20" height="20">
+                <!-- Simple closed-eye arc (stroke-only), flipped upside-down -->
+                <path transform="rotate(180 12 12)" d="M3 12c3-4 9-4 9-4s6 0 9 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        `;
+        // click and keyboard support
+        toggleControlDiv.addEventListener('click', () => { toggleSidebarFilter(); });
+        toggleControlDiv.addEventListener('keydown', (ev) => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); toggleSidebarFilter(); } });
+    // Ensure the element reflects the current enabled state immediately
+    try { toggleControlDiv.classList.toggle('enabled', !!sidebarFilterEnabled); } catch (e) {}
+    map.controls[google.maps.ControlPosition.TOP_RIGHT].push(toggleControlDiv);
+    // sync initial UI (keeps aria/title/class in sync)
+    updateToggleControlUi();
 
         // Close sidebar when clicking outside on mobile
         document.addEventListener('click', (event) => {
@@ -219,6 +286,12 @@ function initMap() {
         } catch (e) {
             // locateUser has its own error handling; swallow any unexpected exceptions here
         }
+
+        // When the map becomes idle (after user pans/zooms), update the sidebar
+        // to only show locations that are currently visible in the viewport.
+        map.addListener && map.addListener('idle', () => {
+            try { updateSidebarToMapBounds(); } catch (e) { /* ignore */ }
+        });
     } catch (error) {
         showApiError();
     }
@@ -347,7 +420,74 @@ function populateLocations(list) {
     // when all geocoding attempts settle, fit bounds
     Promise.allSettled(geocodePromises).then(() => {
         if (!bounds.isEmpty()) map.fitBounds(bounds);
+        // After markers are created/positioned, ensure the sidebar lists only
+        // locations that are currently visible in the map viewport.
+        try { updateSidebarToMapBounds(); } catch(e) { /* ignore */ }
     });
+}
+
+// Hide/show sidebar entries to match locations visible in the current map bounds.
+// If markers aren't ready yet, we retry a few times (best-effort).
+function updateSidebarToMapBounds(options = {}){
+    if (typeof map === 'undefined' || !map || typeof markers === 'undefined') return;
+    const maxRetries = options.maxRetries || 6;
+    const retryDelay = options.retryDelay || 300;
+    let attempts = 0;
+
+    function attempt(){
+        const items = document.querySelectorAll('.location-item');
+        if (!items || items.length === 0){
+            // nothing to update
+            return;
+        }
+
+        // If markers array hasn't been populated yet (length mismatch), retry
+        if (markers.length === 0 || markers.length < items.length){
+            attempts++;
+            if (attempts <= maxRetries){
+                setTimeout(attempt, retryDelay);
+            }
+            return;
+        }
+
+        const bounds = map.getBounds();
+        // If bounds are not available yet, retry
+        if (!bounds){
+            attempts++;
+            if (attempts <= maxRetries) setTimeout(attempt, retryDelay);
+            return;
+        }
+
+        items.forEach(item => {
+            const idx = parseInt(item.dataset.index, 10);
+            const marker = markers[idx];
+            if (!marker || !marker.getPosition){
+                // If filtering is disabled, show everything
+                if (!sidebarFilterEnabled){ item.classList.remove('out-of-view'); item.removeAttribute('aria-hidden'); return; }
+                item.classList.add('out-of-view');
+                item.setAttribute('aria-hidden','true');
+                return;
+            }
+            try{
+                const pos = marker.getPosition();
+                if (!sidebarFilterEnabled){
+                    item.classList.remove('out-of-view');
+                    item.removeAttribute('aria-hidden');
+                } else if (pos && bounds.contains(pos)){
+                    item.classList.remove('out-of-view');
+                    item.removeAttribute('aria-hidden');
+                } else {
+                    item.classList.add('out-of-view');
+                    item.setAttribute('aria-hidden','true');
+                }
+            }catch(e){
+                if (!sidebarFilterEnabled){ item.classList.remove('out-of-view'); item.removeAttribute('aria-hidden'); }
+                else { item.classList.add('out-of-view'); item.setAttribute('aria-hidden','true'); }
+            }
+        });
+    }
+
+    attempt();
 }
 
 function makeListItem(location, idx) {
@@ -986,8 +1126,9 @@ function locateUser() {
         const lng = pos.coords.longitude;
         const latLng = new google.maps.LatLng(lat, lng);
         try {
-            map.panTo(latLng);
-            map.setZoom(Math.max(map.getZoom(), 14));
+            // Instead of forcing a fixed zoom, fit the map to the user's location
+            // and the nearest surrounding markers so the user sees nearby resources.
+            fitMapToNearestMarkers(latLng);
 
             // show a temporary marker indicating the user's location
             if (window._userLocationMarker) window._userLocationMarker.setMap(null);
@@ -1057,4 +1198,63 @@ function showToast(message, type = 'info') {
     setTimeout(() => {
         toastContainer.classList.add('hidden');
     }, 4000);
+}
+
+// Compute haversine distance (km) between two lat/lng points
+function haversineKm(lat1, lon1, lat2, lon2) {
+    function toRad(deg){return deg * Math.PI / 180;}
+    const R = 6371; // Earth radius km
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+              Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+              Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+}
+
+// Fit the map to the user's location and the nearest surrounding markers.
+// If markers are not yet available, retry a few times (best-effort).
+function fitMapToNearestMarkers(userLatLng, options = {}) {
+    const maxRetries = options.maxRetries || 6;
+    const retryDelay = options.retryDelay || 400; // ms
+    const take = options.count || 5;
+    const maxZoomClamp = options.maxZoom || 16;
+
+    function attempt(retry) {
+        // Collect existing marker positions
+        const positions = markers.filter(m => m && typeof m.getPosition === 'function' && m.getPosition()).map(m => m.getPosition());
+        if (!positions || positions.length === 0) {
+            if (retry < maxRetries) {
+                setTimeout(() => attempt(retry + 1), retryDelay);
+                return;
+            }
+            // Fallback: center and use reasonable zoom
+            map.panTo(userLatLng);
+            map.setZoom(Math.max(map.getZoom(), 14));
+            return;
+        }
+
+        // Compute distances to each marker
+        const dists = positions.map(p => ({pos: p, d: haversineKm(userLatLng.lat(), userLatLng.lng(), p.lat(), p.lng())}));
+        dists.sort((a,b) => a.d - b.d);
+        const nearest = dists.slice(0, take).map(x => x.pos);
+
+        // Build bounds including user and the nearest markers
+        const bounds = new google.maps.LatLngBounds();
+        bounds.extend(userLatLng);
+        nearest.forEach(p => bounds.extend(p));
+
+        // Fit bounds and clamp zoom if map zooms in too far
+        map.fitBounds(bounds);
+        google.maps.event.addListenerOnce(map, 'idle', function() {
+            try {
+                if (map.getZoom() > maxZoomClamp) map.setZoom(maxZoomClamp);
+            } catch (e) {
+                // ignore
+            }
+        });
+    }
+
+    attempt(0);
 }
