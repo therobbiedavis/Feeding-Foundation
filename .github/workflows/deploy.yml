@@ -36,6 +36,7 @@ jobs:
 
           # Use perl to safely replace the placeholder with the secret (handles special chars)
           perl -0777 -pe 's/YOUR_API_KEY/$ENV{"GOOGLE_MAPS_API_KEY"}/g' -i index.html
+          perl -0777 -pe 's/YOUR_API_KEY/$ENV{"GOOGLE_MAPS_API_KEY"}/g' -i add-location.html
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
