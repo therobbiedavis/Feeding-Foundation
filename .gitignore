@@ -25,6 +25,14 @@ Thumbs.db
 .tools/
 imgs/potrace*.zip
 
+## Build artifacts
+*.min.css
+*.min.js
+
+## Inline assets (extracted for minification)
+add-location-inline.css
+add-location-inline.js
+
 ## Pre-geocoded output
 locations.pregeo.json
 
