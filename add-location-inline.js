@@ -53,7 +53,7 @@
         }
 
         // --- Geocoding ---
-        const GOOGLE_API_KEY = 'YOUR_API_KEY'; // Replace with your actual Google Maps Geocoding API key to enable Google geocoding for better accuracy on missing fields
+        const GOOGLE_API_KEY = '[[GOOGLE_MAPS_API_KEY]]'; // Replace with your actual Google Maps Geocoding API key to enable Google geocoding for better accuracy on missing fields
 
         async function geocodeNominatimClient(address){
             if (!address) throw new Error('No address');
@@ -415,6 +415,7 @@
 
             console.log('stillNeed after reverse:', stillNeed);
             console.log('GOOGLE_API_KEY available:', GOOGLE_API_KEY && GOOGLE_API_KEY !== 'YOUR_API_KEY');
+            console.log('GOOGLE_API_KEY value:', GOOGLE_API_KEY);
 
             // Only use Google as last resort if fields are still missing and API key is available
             if ((stillNeed.city || stillNeed.state || stillNeed.postcode || stillNeed.county || stillNeed.latlng) && GOOGLE_API_KEY && GOOGLE_API_KEY !== 'YOUR_API_KEY'){
