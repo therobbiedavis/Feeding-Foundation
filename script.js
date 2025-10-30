@@ -48,7 +48,6 @@ function parseStateFromAddress(address) {
 
 // Fallback for when Google Maps API fails to load
 window.gm_authFailure = function() {
-    console.error('Google Maps API authentication failed');
     showApiError();
 };
 
@@ -56,7 +55,6 @@ window.gm_authFailure = function() {
 window.addEventListener('load', function() {
     setTimeout(function() {
         if (typeof google === 'undefined' || !map) {
-            console.warn('Google Maps API did not load properly');
             showApiError();
         }
     }, 3000); // Give it 3 seconds to load
@@ -212,7 +210,6 @@ function initMap() {
         // Load locations from JSON
         loadLocations();
     } catch (error) {
-        console.error('Error initializing map:', error);
         showApiError();
     }
 }
@@ -238,7 +235,9 @@ function loadLocations() {
             // Show all active locations on first load
             filterLocations();
         })
-        .catch(error => console.error('Error loading locations:', error));
+        .catch(error => {
+            // Error loading locations - silently fail for now
+        });
 }
 
 function populateLocations(list) {
@@ -328,7 +327,6 @@ function populateLocations(list) {
 
             bounds.extend(latLng);
         }).catch(err => {
-            console.error('Geocode failed for', location.address, err);
             markers[idx] = null;
             infoWindows[idx] = null;
         });
@@ -363,7 +361,6 @@ function makeListItem(location, idx) {
     `;
     el.addEventListener('click', () => {
         openLocation(idx).catch(err => {
-            console.warn('Could not open location:', err);
             // fallback: try to geocode then center map
             geocodeAddress(location.address)
                 .then(latLng => {
@@ -1008,7 +1005,6 @@ function locateUser() {
 
             showToast('Map centered on your location.', 'success');
         } catch (err) {
-            console.error('Error centering map on user location:', err);
             showToast('Failed to center map on your location.', 'error');
         }
 
@@ -1019,7 +1015,6 @@ function locateUser() {
     };
 
     const failure = (err) => {
-        console.warn('Geolocation error', err);
         if (err && err.code === 1) {
             showToast('Permission to access your location was denied. You can enable it in your browser settings.', 'error');
         } else if (err && err.code === 3) {

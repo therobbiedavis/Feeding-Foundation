@@ -413,18 +413,12 @@
                 latlng: !(nom && nom.lat && nom.lng)
             };
 
-            console.log('stillNeed after reverse:', stillNeed);
-            console.log('GOOGLE_API_KEY available:', GOOGLE_API_KEY && GOOGLE_API_KEY !== 'YOUR_API_KEY');
-            console.log('GOOGLE_API_KEY value:', GOOGLE_API_KEY);
-
             // Only use Google as last resort if fields are still missing and API key is available
             if ((stillNeed.city || stillNeed.state || stillNeed.postcode || stillNeed.county || stillNeed.latlng) && GOOGLE_API_KEY && GOOGLE_API_KEY !== 'YOUR_API_KEY'){
-                console.log('Attempting Google geocoding for:', address);
                 try{
                     google = await geocodeGoogleClient(address);
                     if (statusEl) statusEl.textContent = 'Supplemented via Google';
                 }catch(ge){
-                    console.error('Google geocoding failed:', ge);
                     google = null;
                 }
             } else if ((stillNeed.city || stillNeed.state || stillNeed.postcode || stillNeed.county || stillNeed.latlng) && (!GOOGLE_API_KEY || GOOGLE_API_KEY === 'YOUR_API_KEY') && statusEl){
