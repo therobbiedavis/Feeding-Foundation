@@ -53,7 +53,7 @@
         }
 
         // --- Geocoding ---
-        const GOOGLE_API_KEY = '[[GOOGLE_MAPS_API_KEY]]'; // Replace with your actual Google Maps Geocoding API key to enable Google geocoding for better accuracy on missing fields
+        const GOOGLE_API_KEY = '[[GOOGLE_GEO_API_KEY]]'; // Replace with your actual Google Maps Geocoding API key to enable Google geocoding for better accuracy on missing fields
 
         async function geocodeNominatimClient(address){
             if (!address) throw new Error('No address');

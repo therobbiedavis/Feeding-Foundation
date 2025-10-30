@@ -35,17 +35,22 @@ jobs:
       - name: Replace API key
         env:
           GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+          GOOGLE_GEO_API_KEY: ${{ secrets.GOOGLE_GEO_API_KEY }}
         run: |
-          # Fail early if the secret is not provided
+          # Fail early if the secrets are not provided
           if [ -z "$GOOGLE_MAPS_API_KEY" ]; then
             echo "ERROR: GOOGLE_MAPS_API_KEY secret is not set." >&2
+            exit 1
+          fi
+          if [ -z "$GOOGLE_GEO_API_KEY" ]; then
+            echo "ERROR: GOOGLE_GEO_API_KEY secret is not set." >&2
             exit 1
           fi
 
           # Use perl to safely replace the placeholder with the secret (handles special chars)
           perl -0777 -pe 's/YOUR_API_KEY/$ENV{"GOOGLE_MAPS_API_KEY"}/g' -i index.html
-          perl -0777 -pe 's/YOUR_API_KEY/$ENV{"GOOGLE_MAPS_API_KEY"}/g' -i add-location.html
-          perl -0777 -pe 's/\[\[GOOGLE_MAPS_API_KEY\]\]/$ENV{"GOOGLE_MAPS_API_KEY"}/g' -i add-location-inline.js
+          perl -0777 -pe 's/YOUR_API_KEY/$ENV{"GOOGLE_GEO_API_KEY"}/g' -i add-location.html
+          perl -0777 -pe 's/\[\[GOOGLE_GEO_API_KEY\]\]/$ENV{"GOOGLE_GEO_API_KEY"}/g' -i add-location-inline.js
 
       - name: Minify assets
         run: npm run build
