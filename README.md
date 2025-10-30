@@ -28,26 +28,25 @@
 
 ## 🎯 About
 
-Feeding Foundation is a community-driven web application that maps local food resources — food banks, pantries, soup kitchens, community gardens, and farmers markets. Our mission is to help residents easily find nearby food assistance and support.
+Feeding Foundation is a web app built by the community to help people find local food resources like food banks, pantries, soup kitchens, community gardens, and farmers markets. Our goal is to make it easy for folks to discover nearby food assistance and support.
 
 ### Why Feeding Foundation?
 
-- **Community-Curated**: Anyone can submit locations through our simple web form
+- **Community-Curated**: Anyone can add locations through our simple web form
 - **Easy to Use**: Filter by county, location type, or search by name
-- **Always Accessible**: Works on any device with graceful fallbacks
-- **Open Source**: Built with transparency and community contribution in mind
+- **Always Accessible**: Works on any device with helpful fallbacks
+- **Open Source**: Built transparently with community contributions in mind
 
-## ✨ Features
+## Features
 
-- 🗺️ **Interactive Google Maps Integration** - Visual display of all food resource locations
-- 🔍 **Advanced Filtering** - Filter by county, location type, or search by name/address
-- 📱 **Mobile Responsive** - Fully optimized for smartphones, tablets, and desktop
-- ⚡ **Fast Loading** - Pre-geocoded locations for instant map rendering
-- 🤝 **Community Submissions** - Simple form for anyone to add new locations
-- ♿ **Accessible Design** - Locations list available even when map is unavailable
-- 🎨 **Modern UI** - Clean, professional design with smooth animations
+- **Interactive Google Maps Integration** - See all food resource locations on a visual map
+- **Advanced Filtering** - Narrow down by county, location type, or search by name/address
+- **Mobile Responsive** - Looks great and works smoothly on phones, tablets, and desktops
+- **Fast Loading** - Pre-geocoded locations so the map pops up instantly
+- **Community Submissions** - Easy form for anyone to add new locations
+- **Accessible Design** - Locations list available even if the map won't load
 
-## 🚀 Quick Start
+## Quick Start
 
 ### For Users
 
@@ -62,7 +61,7 @@ Feeding Foundation is a community-driven web application that maps local food re
 3. **Click "Submit Location"** to open a pre-filled GitHub issue
 4. **Review and submit** the issue for maintainer approval
 
-## 🛠️ Local Development
+## Local Development
 
 ### Prerequisites
 
@@ -136,7 +135,7 @@ The build process minifies CSS and JavaScript files, reducing total size by ~43%
 
 ## 🌍 Pre-geocoding (Recommended)
 
-Pre-geocoding stores latitude/longitude coordinates in `locations.json`, improving performance and reducing API quota usage.
+Pre-geocoding stores latitude/longitude coordinates in `locations.json`, which speeds things up and cuts down on API usage.
 
 ### Using Google Geocoding API (Recommended)
 
@@ -162,11 +161,11 @@ node pregeocode.js --use-nominatim --write
 node pregeocode.js
 ```
 
-> **Note**: Google is recommended for production. Nominatim is public and rate-limited—use only for testing small datasets.
+> **Note**: Google is recommended for production. Nominatim is free but has strict rate limits and usage policies—use only for testing small datasets.
 
-## 🤝 Contributing
+## Contributing
 
-We welcome contributions from everyone! See [CONTRIBUTING.md](CONTRIBUTING.md) for comprehensive guidelines.
+We'd love your help to make Feeding Foundation even better! See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
 
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CODE_OF_CONDUCT.md)
 
@@ -179,7 +178,7 @@ We welcome contributions from everyone! See [CONTRIBUTING.md](CONTRIBUTING.md) f
 
 For detailed instructions on any contribution type, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## 📊 Data Format
+## Data Format
 
 Each location in `locations.json` follows this structure:
 
@@ -227,7 +226,7 @@ Each location in `locations.json` follows this structure:
 
 ### Managing Inactive Locations
 
-To temporarily disable a location without deletion:
+To temporarily disable a location without deleting it:
 
 ```json
 {
@@ -237,9 +236,9 @@ To temporarily disable a location without deletion:
 }
 ```
 
-Inactive locations won't appear on the map but remain in the database.
+Inactive locations won't show up on the map but stay in the database.
 
-## 📂 Project Structure
+## Project Structure
 
 ```
 Feeding-Foundation/
@@ -268,12 +267,12 @@ Feeding-Foundation/
 └── README.md                       # This file
 ```
 
-## 🚀 Deployment
+## Deployment
 
 ### GitHub Pages Setup
 
 1. **Create Google Maps API Key**
-   - Go to [Google Cloud Console](https://console.cloud.google.com/)
+   - Head to [Google Cloud Console](https://console.cloud.google.com/)
    - Enable **Maps JavaScript API** and **Geocoding API**
    - Create API key and restrict to your domain
 
@@ -290,12 +289,12 @@ Feeding-Foundation/
 ### Deployment Workflow
 
 The `.github/workflows/deploy.yml` automatically:
-- ✅ Validates API key secret exists
-- 🔒 Securely injects API key during build
-- 🗜️ Minifies CSS and JavaScript (including inline assets)
-- � Builds and packages the site
-- 🚀 Deploys to GitHub Pages
-- 🔄 Runs on every push to `main` branch
+- Validates API key secret exists
+- Securely injects API key during build
+- Minifies CSS and JavaScript (including inline assets)
+- Builds and packages the site
+- Deploys to GitHub Pages
+- Runs on every push to `main` branch
 
 ### Alternative Hosting
 
@@ -305,7 +304,7 @@ The site is static and can be hosted anywhere:
 - **Cloudflare Pages**: Deploy via Git integration
 - **Any Web Server**: Upload all files to public directory
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Map Not Loading
 
@@ -349,22 +348,21 @@ The site is static and can be hosted anywhere:
 - ✅ Check address format (must include city, state, ZIP)
 - ✅ Verify API quota hasn't been exceeded
 
-## 📄 License
+## License
 
 This project is open source and available under the MIT License.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
-- Built with ❤️ for community impact
 - Inspired by the need to connect people with food resources
 - Thanks to all contributors and community members
 - Powered by Google Maps Platform
 
-## 📞 Support
+## Support
 
-- 🐛 **Report Bugs**: [GitHub Issues](https://github.com/therobbiedavis/Feeding-Foundation/issues)
-- 💬 **Discussions**: [GitHub Discussions](https://github.com/therobbiedavis/Feeding-Foundation/discussions)
-- 📧 **Maintainer**: [@therobbiedavis](https://github.com/therobbiedavis)
+- **Report Bugs**: [GitHub Issues](https://github.com/therobbiedavis/Feeding-Foundation/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/therobbiedavis/Feeding-Foundation/discussions)
+- **Maintainer**: [@therobbiedavis](https://github.com/therobbiedavis)
 
 ---
 

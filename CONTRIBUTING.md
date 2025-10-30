@@ -1,6 +1,6 @@
 # Contributing to Feeding Foundation
 
-Thank you for helping improve Feeding Foundation! We welcome contributions from community members and maintainers. This document explains the preferred workflow for submitting new locations, reporting bugs, and making code changes.
+Thanks for considering contributing to Feeding Foundation! We appreciate your help in improving this project. This guide explains how to submit new locations, report bugs, and make code changes.
 
 ## Table of Contents
 
@@ -50,7 +50,7 @@ Thank you for helping improve Feeding Foundation! We welcome contributions from 
    - **Website**: Add a URL if available
 
 3. **Review auto-filled fields**:
-   - The form will attempt to parse city, state, ZIP, and county from the address
+   - The form will try to parse city, state, ZIP, and county from the address
    - Review and correct any automatically filled fields as needed
    - The form may geocode the address to get coordinates (requires API key)
 
@@ -82,7 +82,7 @@ Thank you for helping improve Feeding Foundation! We welcome contributions from 
 
 ### Prerequisites
 
-Before you start contributing, ensure you have the following installed:
+Before you start contributing, make sure you have these installed:
 
 - **Git** (for version control)
 - **Node.js** (version 18 or higher, for build tools)
@@ -147,9 +147,9 @@ Feeding-Foundation/
 
 ### Code Guidelines
 
-- **HTML**: Use semantic HTML5 elements, maintain accessibility
+- **HTML**: Use semantic HTML5 elements, keep accessibility in mind
 - **CSS**: Follow existing naming conventions, use CSS custom properties for theming
-- **JavaScript**: Use modern ES6+ features, maintain readable code structure
+- **JavaScript**: Use modern ES6+ features, keep code readable
 - **JSON**: Keep location data well-formatted and consistent
 
 ## Testing your changes
@@ -310,7 +310,7 @@ Maintainers can use the included `add-location.js` helper to validate JSON from 
 node add-location.js '{"name":"New Pantry","address":"123 Main St, Town, GA","county":"Coweta","type":"Food Bank","description":"Open Wed 10-2"}'
 ```
 
-If you maintain a custom script for linting JSON, include it in the repo and mention it here.
+If you have a custom script for linting JSON, include it in the repo and mention it here.
 
 ## Running the project locally
 
@@ -324,7 +324,7 @@ npx http-server -c-1
 # then open http://localhost:8000/
 ```
 
-This will ensure fetch requests (e.g., for `locations.json`) work properly.
+This ensures fetch requests (e.g., for `locations.json`) work properly.
 
 If you need to test Google Maps locally, set a temporary API key in your environment (do NOT commit it):
 
@@ -371,7 +371,7 @@ node pregeocode.js --use-nominatim --write
 
 **Problem**: `npm install` fails
 ```
-Solution: Ensure you have Node.js 18+ installed. Try clearing npm cache: npm cache clean --force
+Solution: Make sure you have Node.js 18+ installed. Try clearing npm cache: npm cache clean --force
 ```
 
 **Problem**: Local server won't start
@@ -388,7 +388,7 @@ Solution: Make sure you're using a local server (not file://). Check browser con
 
 **Problem**: Form won't generate location data
 ```
-Solution: Ensure all required fields (Name, Address, Type) are filled out completely.
+Solution: Make sure all required fields (Name, Address, Type) are filled out completely.
 ```
 
 **Problem**: Geocoding fails in the form
