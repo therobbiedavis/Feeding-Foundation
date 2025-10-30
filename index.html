@@ -82,6 +82,9 @@
                 </div>
                 <div id="filters-container" class="filters-container collapsed">
                     <div class="filter-row">
+                        <select id="state-select" aria-label="Select state">
+                            <option value="">All States</option>
+                        </select>
                         <select id="county-select" aria-label="Select county">
                             <option value="">All Counties</option>
                         </select>
@@ -97,6 +100,7 @@
                         </label>
                     </div>
                 </div>
+                <div id="sidebar-toast" class="sidebar-toast hidden"></div>
             </div>
             <div id="list" class="locations-list">
                 <!-- location items injected here -->
@@ -106,6 +110,7 @@
             </footer>
         </aside>
 
+        <div id="viewport-toast" class="toast hidden"></div>
         <section id="map" class="map" aria-label="Map showing locations"></section>
         <div id="api-error" class="api-error hidden">
             <div class="error-content">
@@ -134,6 +139,6 @@
     </footer>
 
     <script src="script.js"></script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBTCGyOVfbwvwdB-SoFao2bFk5eWAxdEvI&callback=initMap"></script>
 </body>
 </html>

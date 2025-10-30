@@ -6,7 +6,45 @@ let geocodePromises = [];
 let locationsData = [];
 let selectedCounty = '';
 let selectedType = '';
+let selectedState = '';
 let isUpdatingDropdowns = false;
+
+// Mapping of US state names to their USPS abbreviations
+const STATE_NAME_TO_ABBR = {
+    'alabama':'AL','alaska':'AK','arizona':'AZ','arkansas':'AR','california':'CA','colorado':'CO','connecticut':'CT','delaware':'DE','florida':'FL','georgia':'GA','hawaii':'HI','idaho':'ID','illinois':'IL','indiana':'IN','iowa':'IA','kansas':'KS','kentucky':'KY','louisiana':'LA','maine':'ME','maryland':'MD','massachusetts':'MA','michigan':'MI','minnesota':'MN','mississippi':'MS','missouri':'MO','montana':'MT','nebraska':'NE','nevada':'NV','new hampshire':'NH','new jersey':'NJ','new mexico':'NM','new york':'NY','north carolina':'NC','north dakota':'ND','ohio':'OH','oklahoma':'OK','oregon':'OR','pennsylvania':'PA','rhode island':'RI','south carolina':'SC','south dakota':'SD','tennessee':'TN','texas':'TX','utah':'UT','vermont':'VT','virginia':'VA','washington':'WA','west virginia':'WV','wisconsin':'WI','wyoming':'WY','district of columbia':'DC'
+};
+
+function parseStateFromAddress(address) {
+    if (!address || typeof address !== 'string') return null;
+    const txt = address.trim();
+
+    // 1) Look for a trailing pattern like ", XX" or ", XX 12345" where XX is 2-letter state
+    let m = txt.match(/,\s*([A-Za-z]{2})(?:\s+\d{5}(?:-\d{4})?)?$/);
+    if (m && m[1]) {
+        return m[1].toUpperCase();
+    }
+
+    // 2) Look for a trailing full state name before ZIP or end
+    m = txt.match(/,\s*([A-Za-z ]+?)\s*(?:\d{5}(?:-\d{4})?)?$/);
+    if (m && m[1]) {
+        const name = m[1].toLowerCase().trim();
+        if (STATE_NAME_TO_ABBR[name]) return STATE_NAME_TO_ABBR[name];
+        // Sometimes city parts contain commas, so try last token as state name
+        const tokens = name.split(/\s+/);
+        const lastTwo = tokens.slice(-2).join(' ');
+        if (STATE_NAME_TO_ABBR[lastTwo]) return STATE_NAME_TO_ABBR[lastTwo];
+        const lastOne = tokens.slice(-1)[0];
+        if (STATE_NAME_TO_ABBR[lastOne]) return STATE_NAME_TO_ABBR[lastOne];
+    }
+
+    // 3) Try to find any known state abbreviation in the address (word boundary)
+    const abbrs = Object.values(STATE_NAME_TO_ABBR).join('|');
+    const re = new RegExp('\\b(' + abbrs + ')\\b', 'i');
+    m = txt.match(re);
+    if (m && m[1]) return m[1].toUpperCase();
+
+    return null;
+}
 
 // Fallback for when Google Maps API fails to load
 window.gm_authFailure = function() {
@@ -47,6 +85,20 @@ function initMap() {
             document.getElementById('sidebar').classList.toggle('open');
         });
 
+        // Add geolocate control to map
+        const locateControlDiv = document.createElement('div');
+        locateControlDiv.className = 'map-control';
+        locateControlDiv.title = 'Center map on your current location';
+        locateControlDiv.innerHTML = `
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3c-.46-4.17-3.77-7.48-7.94-7.94V1h-2v2.06C6.83 3.52 3.52 6.83 3.06 11H1v2h2.06c.46 4.17 3.77 7.48 7.94 7.94V23h2v-2.06c4.17-.46 7.48-3.77 7.94-7.94H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/>
+            </svg>
+        `;
+        locateControlDiv.addEventListener('click', () => {
+            locateUser();
+        });
+        map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(locateControlDiv);
+
         // Close sidebar when clicking outside on mobile
         document.addEventListener('click', (event) => {
             const sidebar = document.getElementById('sidebar');
@@ -62,6 +114,32 @@ function initMap() {
 
         // Set current year
         document.getElementById('year').textContent = new Date().getFullYear();
+
+        // State selector
+        const stateSelect = document.getElementById('state-select');
+        stateSelect.addEventListener('change', () => {
+            if (isUpdatingDropdowns) return;
+            selectedState = stateSelect.value;
+            // Update county and type dropdowns based on selected state
+            isUpdatingDropdowns = true;
+            if (selectedState) {
+                const filtered = locationsData.filter(loc => loc.active !== false && loc.state === selectedState);
+                populateCountyDropdown(filtered);
+                populateTypeDropdown(filtered);
+            } else {
+                populateCountyDropdown(locationsData);
+                populateTypeDropdown(locationsData);
+            }
+            // Preserve selected county/type if still available
+            if (selectedCounty && countySelect.querySelector(`option[value="${selectedCounty}"]`)) {
+                countySelect.value = selectedCounty;
+            }
+            if (selectedType && typeSelect.querySelector(`option[value="${selectedType}"]`)) {
+                typeSelect.value = selectedType;
+            }
+            isUpdatingDropdowns = false;
+            filterLocations();
+        });
 
         // County selector
         const countySelect = document.getElementById('county-select');
@@ -85,8 +163,8 @@ function initMap() {
             filterLocations();
         });
 
-        // Type selector
-        const typeSelect = document.getElementById('type-select');
+    // Type selector
+    const typeSelect = document.getElementById('type-select');
         typeSelect.addEventListener('change', () => {
             if (isUpdatingDropdowns) return;
             selectedType = typeSelect.value;
@@ -145,6 +223,15 @@ function loadLocations() {
         .then(data => {
             locationsData = data.locations || [];
             isUpdatingDropdowns = true;
+            // Ensure each location has a state property by attempting to parse it from the address
+            locationsData.forEach(loc => {
+                if ((!loc.state || loc.state === '') && loc.address) {
+                    const parsed = parseStateFromAddress(loc.address);
+                    if (parsed) loc.state = parsed;
+                }
+            });
+
+            populateStateDropdown(locationsData);
             populateCountyDropdown(locationsData);
             populateTypeDropdown(locationsData);
             isUpdatingDropdowns = false;
@@ -323,6 +410,11 @@ function filterLocations() {
     // Filter by active status first
     filtered = filtered.filter(loc => loc.active !== false);
     
+    // Filter by state if selected
+    if (selectedState) {
+        filtered = filtered.filter(loc => loc.state === selectedState);
+    }
+
     // Filter by county if selected
     if (selectedCounty) {
         filtered = filtered.filter(loc => loc.county === selectedCounty);
@@ -398,8 +490,36 @@ function parseSchedule(scheduleText) {
         return { type: 'appointment' };
     }
 
-    // Handle monthly patterns (first Saturday, etc.)
-    if (text.includes('first saturday') || text.includes('first of each month') || text.includes('monthly')) {
+    // Handle monthly patterns like:
+    // - "Second Saturday of each month"
+    // - "every 2nd saturday"
+    // - "on the 2nd saturday"
+    // - "2nd & 4th Saturdays"
+    // - word ordinals (first/second/etc.) or numeric ordinals (1st/2nd/etc.) and optional conjunctions
+    const ordinalToken = '(?:first|1st|second|2nd|third|3rd|fourth|4th|last)';
+    const multiOrdinalPattern = new RegExp('\\b(' + ordinalToken + '(?:\\s*(?:&|and|,|and the)\\s*' + ordinalToken + ')*)\\b[^\\n]{0,20}\\b(monday|tuesday|wednesday|thursday|friday|saturday|sunday)s?\\b', 'i');
+    const m = text.match(multiOrdinalPattern);
+    if (m) {
+        const ordinalsRaw = m[1];
+        const weekday = m[2].toLowerCase();
+        // split tokens like "2nd & 4th" or "second and fourth" into parts
+        const parts = ordinalsRaw.split(/(?:\s*(?:&|and|,|and the)\s*)/i).map(s => s.trim()).filter(Boolean);
+        const ordinals = parts.map(tok => {
+            tok = tok.toLowerCase();
+            if (tok.startsWith('1') || tok.startsWith('first')) return 1;
+            if (tok.startsWith('2') || tok.startsWith('second')) return 2;
+            if (tok.startsWith('3') || tok.startsWith('third')) return 3;
+            if (tok.startsWith('4') || tok.startsWith('fourth')) return 4;
+            if (tok.startsWith('last')) return -1;
+            return null;
+        }).filter(n => n !== null);
+        if (ordinals.length > 0) {
+            return { type: 'monthly', original: scheduleText, weekday: weekday, ordinals: ordinals };
+        }
+    }
+
+    // Fallback: if the text explicitly mentions monthly without ordinals, still mark as monthly
+    if (text.includes('first of each month') || text.includes('monthly') || text.includes('of each month')) {
         return { type: 'monthly', original: scheduleText };
     }
 
@@ -596,14 +716,88 @@ function isLocationOpenNow(scheduleText) {
         case 'appointment':
             return null; // Unknown - requires appointment
         case 'monthly':
-            // Handle monthly schedules like "First Saturday of each month"
-            if (schedule.original.toLowerCase().includes('first saturday')) {
-                const dayOfMonth = now.getDate();
-                const dayOfWeek = now.getDay(); // 0 = Sunday, 6 = Saturday
-                // Check if it's Saturday and the date is between 1-7 (first week)
-                return dayOfWeek === 6 && dayOfMonth <= 7;
+            // If parseSchedule returned structured weekday + ordinals, evaluate precisely
+            if (schedule.weekday && Array.isArray(schedule.ordinals) && schedule.ordinals.length > 0) {
+                const weekdayName = schedule.weekday.toLowerCase();
+                const weekdayMap = { sunday:0, monday:1, tuesday:2, wednesday:3, thursday:4, friday:5, saturday:6 };
+                const targetWeekday = weekdayMap[weekdayName];
+                if (typeof targetWeekday === 'undefined') return null;
+
+                // If today is not the target weekday, it's not the scheduled day
+                if (now.getDay() !== targetWeekday) return false;
+
+                const year = now.getFullYear();
+                const month = now.getMonth();
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+                // helper: get date (day number) of the nth occurrence of weekday in month
+                function getNthWeekdayDate(n) {
+                    if (n <= 0) return null;
+                    let count = 0;
+                    for (let d = 1; d <= daysInMonth; d++) {
+                        if (new Date(year, month, d).getDay() === targetWeekday) {
+                            count++;
+                            if (count === n) return d;
+                        }
+                    }
+                    return null;
+                }
+
+                // helper: get date of last occurrence of weekday in month
+                function getLastWeekdayDate() {
+                    for (let d = daysInMonth; d >= 1; d--) {
+                        if (new Date(year, month, d).getDay() === targetWeekday) return d;
+                    }
+                    return null;
+                }
+
+                const today = now.getDate();
+                for (const ord of schedule.ordinals) {
+                    if (ord === -1) {
+                        const lastDate = getLastWeekdayDate();
+                        if (lastDate !== null && today === lastDate) return true;
+                    } else {
+                        const nthDate = getNthWeekdayDate(ord);
+                        if (nthDate !== null && today === nthDate) return true;
+                    }
+                }
+
+                // Not the nth/last weekday
+                return false;
             }
-            // For other monthly patterns, we can't determine without more complex logic
+
+            // Fallback: try to detect common textual phrases (keeps previous heuristic behavior)
+            if (schedule.original) {
+                const lowerOriginal = schedule.original.toLowerCase();
+                if (lowerOriginal.includes('first')) {
+                    const dayOfMonth = now.getDate();
+                    const dayOfWeek = now.getDay();
+                    return dayOfMonth <= 7 && dayOfWeek ===  (lowerOriginal.includes('saturday') ? 6 : dayOfWeek);
+                }
+                if (lowerOriginal.includes('second')) {
+                    const dayOfMonth = now.getDate();
+                    const dayOfWeek = now.getDay();
+                    return dayOfMonth >= 8 && dayOfMonth <= 14 && dayOfWeek === (lowerOriginal.includes('saturday') ? 6 : dayOfWeek);
+                }
+                if (lowerOriginal.includes('third')) {
+                    const dayOfMonth = now.getDate();
+                    const dayOfWeek = now.getDay();
+                    return dayOfMonth >= 15 && dayOfMonth <= 21 && dayOfWeek === (lowerOriginal.includes('saturday') ? 6 : dayOfWeek);
+                }
+                if (lowerOriginal.includes('fourth')) {
+                    const dayOfMonth = now.getDate();
+                    const dayOfWeek = now.getDay();
+                    return dayOfMonth >= 22 && dayOfMonth <= 28 && dayOfWeek === (lowerOriginal.includes('saturday') ? 6 : dayOfWeek);
+                }
+                if (lowerOriginal.includes('last')) {
+                    const dayOfMonth = now.getDate();
+                    const dayOfWeek = now.getDay();
+                    const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+                    return dayOfWeek === (lowerOriginal.includes('saturday') ? 6 : dayOfWeek) && dayOfMonth > (lastDayOfMonth - 7);
+                }
+            }
+
+            // Unknown monthly phrasing
             return null;
         case 'complex':
         case 'unknown':
@@ -739,4 +933,123 @@ function populateTypeDropdown(locations) {
         option.textContent = type;
         typeSelect.appendChild(option);
     });
+}
+
+function populateStateDropdown(locations) {
+    const stateSelect = document.getElementById('state-select');
+
+    // Get unique states from active locations and sort them
+    const states = [...new Set(
+        locations
+            .filter(loc => loc.active !== false)
+            .map(loc => loc.state)
+            .filter(state => state)
+    )].sort();
+
+    // Clear existing options except the first one
+    while (stateSelect.options.length > 1) {
+        stateSelect.remove(1);
+    }
+
+    // Add state options
+    states.forEach(state => {
+        const option = document.createElement('option');
+        option.value = state;
+        option.textContent = state;
+        stateSelect.appendChild(option);
+    });
+}
+
+// Try to center the map on the user's current location using the browser Geolocation API
+function locateUser() {
+    if (typeof navigator === 'undefined' || !navigator.geolocation) {
+        showToast('Geolocation is not supported by your browser.', 'error');
+        return;
+    }
+
+    const btn = document.querySelector('.map-control');
+    const prevDisabled = btn ? btn.style.pointerEvents === 'none' : false;
+    if (btn) {
+        btn.style.pointerEvents = 'none';
+        btn.style.opacity = '0.6';
+    }
+
+    const success = (pos) => {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+        const latLng = new google.maps.LatLng(lat, lng);
+        try {
+            map.panTo(latLng);
+            map.setZoom(Math.max(map.getZoom(), 14));
+
+            // show a temporary marker indicating the user's location
+            if (window._userLocationMarker) window._userLocationMarker.setMap(null);
+            window._userLocationMarker = new google.maps.Marker({
+                position: latLng,
+                map: map,
+                title: 'Your location',
+                icon: {
+                    path: google.maps.SymbolPath.CIRCLE,
+                    scale: 9,
+                    fillColor: '#1f7f63',
+                    fillOpacity: 0.95,
+                    strokeColor: '#ffffff',
+                    strokeWeight: 2
+                }
+            });
+
+            // Auto-remove marker after 12 seconds
+            setTimeout(() => {
+                if (window._userLocationMarker) {
+                    window._userLocationMarker.setMap(null);
+                    window._userLocationMarker = null;
+                }
+            }, 12000);
+
+            showToast('Map centered on your location.', 'success');
+        } catch (err) {
+            console.error('Error centering map on user location:', err);
+            showToast('Failed to center map on your location.', 'error');
+        }
+
+        if (btn) {
+            btn.style.pointerEvents = prevDisabled ? 'none' : 'auto';
+            btn.style.opacity = '1';
+        }
+    };
+
+    const failure = (err) => {
+        console.warn('Geolocation error', err);
+        if (err && err.code === 1) {
+            showToast('Permission to access your location was denied. You can enable it in your browser settings.', 'error');
+        } else if (err && err.code === 3) {
+            showToast('Timed out while trying to get your location. Try again.', 'error');
+        } else {
+            showToast('Could not determine your location.', 'error');
+        }
+        if (btn) {
+            btn.style.pointerEvents = prevDisabled ? 'none' : 'auto';
+            btn.style.opacity = '1';
+        }
+    };
+
+    navigator.geolocation.getCurrentPosition(success, failure, { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 });
+}
+
+// Show a temporary toast notification in the sidebar
+function showToast(message, type = 'info') {
+    const toastContainer = document.getElementById('viewport-toast');
+    if (!toastContainer) return;
+
+    // Set the message and type
+    toastContainer.textContent = message;
+    toastContainer.className = `toast ${type}`;
+
+    // Show the toast
+    toastContainer.classList.remove('hidden');
+
+    // Auto-hide after 4 seconds
+    setTimeout(() => {
+        toastContainer.classList.add('hidden');
+    }, 4000);
 }
