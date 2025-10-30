@@ -381,6 +381,21 @@
       "schedule": "3rd Thursday of each month at 8:00 AM - 11:15 AM",
       "website": "https://www.reallifecenter.org/rlc-monthly-mfp",
       "active": true
+    },
+    {
+      "name": "God's Bread Basket Food Closet",
+      "type": "Food Pantry",
+      "address": "407 Church St. Hogansville, Ga. 30230",
+      "city": "Hogansville",
+      "state": "GA",
+      "zip": "30230",
+      "county": "Troup",
+      "lat": 33.1757481,
+      "lng": -84.9083185,
+      "description": "(706)575-4573",
+      "schedule": "Thursdays, 9 a.m.–12 p.m.",
+      "website": null,
+      "active": true
     }
   ]
 }
