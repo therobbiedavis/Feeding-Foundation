@@ -7,7 +7,6 @@
   
   [![Live Site](https://img.shields.io/badge/Live-Demo-1f7f63?style=for-the-badge)](https://therobbiedavis.github.io/Feeding-Foundation/)
   [![Add Location](https://img.shields.io/badge/Add-Location-3bbf9a?style=for-the-badge)](https://therobbiedavis.github.io/Feeding-Foundation/add-location.html)
-  [![Contribute](https://img.shields.io/badge/Contribute-GitHub-ef8a1f?style=for-the-badge)](https://github.com/therobbiedavis/Feeding-Foundation/issues/new/choose)
 </div>
 
 ---
