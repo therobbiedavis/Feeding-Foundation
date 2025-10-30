@@ -13,17 +13,17 @@
 
 ## Table of Contents
 
-- [About](#-about)
-- [Features](#-features)
-- [Quick Start](#-quick-start)
-- [Local Development](#-local-development)
-- [Pre-geocoding](#-pre-geocoding-recommended)
-- [Contributing](#-contributing)
-- [Data Format](#-data-format)
-- [Project Structure](#-project-structure)
-- [Deployment](#-deployment)
-- [Troubleshooting](#-troubleshooting)
-- [License](#-license)
+- [About](#about)
+- [Features](#features)
+- [Quick Start](#quick-start)
+- [Local Development](#local-development)
+- [Pre-geocoding](#pre-geocoding-recommended)
+- [Contributing](#contributing)
+- [Data Format](#data-format)
+- [Project Structure](#project-structure)
+- [Deployment](#deployment)
+- [Troubleshooting](#troubleshooting)
+- [License](#license)
 
 ## About
 
