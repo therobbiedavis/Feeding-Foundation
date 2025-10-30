@@ -12,7 +12,7 @@
 
 ---
 
-## 📖 Table of Contents
+## Table of Contents
 
 - [About](#-about)
 - [Features](#-features)
@@ -26,7 +26,7 @@
 - [Troubleshooting](#-troubleshooting)
 - [License](#-license)
 
-## 🎯 About
+## About
 
 Feeding Foundation is a web app built by the community to help people find local food resources like food banks, pantries, soup kitchens, community gardens, and farmers markets. Our goal is to make it easy for folks to discover nearby food assistance and support.
 
