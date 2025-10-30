@@ -493,7 +493,7 @@ function updateSidebarToMapBounds(options = {}){
 function makeListItem(location, idx) {
     const locationJson = encodeURIComponent(JSON.stringify(location, null, 2));
     const isOpen = isLocationOpenNow(location.schedule);
-    const statusIndicator = isOpen === true ? '<span class="status-indicator open">● Open now</span>' : 
+    const statusIndicator = isOpen === true ? '<span class="status-indicator open">● Open</span>' : 
                            isOpen === false ? '<span class="status-indicator closed">● Closed</span>' : '';
     
     const el = document.createElement('div');
@@ -619,37 +619,27 @@ function escapeHtml(str){
     return String(str).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
 }
 
-// Schedule parsing and "open now" functionality
+// Schedule parsing and "open now" functionality (normalizes punctuation + flexible time regex)
 function parseSchedule(scheduleText) {
     if (!scheduleText || typeof scheduleText !== 'string') {
         return null;
     }
 
-    const text = scheduleText.toLowerCase().trim();
+    // Normalize input: remove dots from AM/PM, unify dash characters, collapse whitespace
+    const normalized = scheduleText.toLowerCase().replace(/\./g, '').replace(/[–—]/g, '-').replace(/\s+/g, ' ').trim();
+    const text = normalized;
 
-    // Handle 24/7 locations
-    if (text.includes('24/7') || text.includes('24 hours') || text.includes('always open')) {
-        return { type: 'always' };
-    }
+    // Handle simple keywords
+    if (text.includes('24/7') || text.includes('24 hours') || text.includes('always open')) return { type: 'always' };
+    if (text.includes('appointment') || text.includes('call first') || text.includes('contact')) return { type: 'appointment' };
 
-    // Handle "by appointment" or similar
-    if (text.includes('appointment') || text.includes('call first') || text.includes('contact')) {
-        return { type: 'appointment' };
-    }
-
-    // Handle monthly patterns like:
-    // - "Second Saturday of each month"
-    // - "every 2nd saturday"
-    // - "on the 2nd saturday"
-    // - "2nd & 4th Saturdays"
-    // - word ordinals (first/second/etc.) or numeric ordinals (1st/2nd/etc.) and optional conjunctions
+    // Monthly patterns
     const ordinalToken = '(?:first|1st|second|2nd|third|3rd|fourth|4th|last)';
     const multiOrdinalPattern = new RegExp('\\b(' + ordinalToken + '(?:\\s*(?:&|and|,|and the)\\s*' + ordinalToken + ')*)\\b[^\\n]{0,20}\\b(monday|tuesday|wednesday|thursday|friday|saturday|sunday)s?\\b', 'i');
-    const m = text.match(multiOrdinalPattern);
-    if (m) {
-        const ordinalsRaw = m[1];
-        const weekday = m[2].toLowerCase();
-        // split tokens like "2nd & 4th" or "second and fourth" into parts
+    const mm = text.match(multiOrdinalPattern);
+    if (mm) {
+        const ordinalsRaw = mm[1];
+        const weekday = mm[2].toLowerCase();
         const parts = ordinalsRaw.split(/(?:\s*(?:&|and|,|and the)\s*)/i).map(s => s.trim()).filter(Boolean);
         const ordinals = parts.map(tok => {
             tok = tok.toLowerCase();
@@ -660,190 +650,71 @@ function parseSchedule(scheduleText) {
             if (tok.startsWith('last')) return -1;
             return null;
         }).filter(n => n !== null);
-        if (ordinals.length > 0) {
-            return { type: 'monthly', original: scheduleText, weekday: weekday, ordinals: ordinals };
-        }
+        if (ordinals.length > 0) return { type: 'monthly', original: scheduleText, weekday: weekday, ordinals: ordinals };
     }
+    if (text.includes('first of each month') || text.includes('monthly') || text.includes('of each month')) return { type: 'monthly', original: scheduleText };
 
-    // Fallback: if the text explicitly mentions monthly without ordinals, still mark as monthly
-    if (text.includes('first of each month') || text.includes('monthly') || text.includes('of each month')) {
-        return { type: 'monthly', original: scheduleText };
-    }
-
-    // Try to parse day and time information
+    // Scheduled day/time parsing
     const schedule = { type: 'scheduled', dayTimes: {} };
-
-    // Common day patterns
     const dayPatterns = {
-        'monday': ['monday', 'mon'],
-        'tuesday': ['tuesday', 'tues', 'tue'],
-        'wednesday': ['wednesday', 'wed'],
-        'thursday': ['thursday', 'thurs', 'thu'],
-        'friday': ['friday', 'fri'],
-        'saturday': ['saturday', 'sat'],
-        'sunday': ['sunday', 'sun']
+        'monday': ['monday', 'mon'], 'tuesday': ['tuesday', 'tues', 'tue'], 'wednesday': ['wednesday', 'wed'],
+        'thursday': ['thursday', 'thurs', 'thu'], 'friday': ['friday', 'fri'], 'saturday': ['saturday', 'sat'], 'sunday': ['sunday', 'sun']
     };
 
-    // First, try to parse as day-specific schedules (like "Wednesdays 4:30 PM, Saturdays 8:00 AM")
-    const parts = text.split(',').map(part => part.trim());
+    const parts = text.split(',').map(p => p.trim());
     let hasDaySpecific = false;
     let totalDaysCount = 0;
     let partsWithTimes = 0;
 
-    // Count total days and parts with times
+    // Flexible time regex for normalized text (no dots, unified dashes)
+    const timeRegex = /(\d{1,2})(?::(\d{2}))?\s*(am|pm)?(?:\s*-\s*(\d{1,2})(?::(\d{2}))?\s*(am|pm)?)?/g;
+
     parts.forEach(part => {
-        let partDays = 0;
-        let partTimes = 0;
-
-        // Count days in this part
+        let partDays = 0, partTimes = 0;
         Object.keys(dayPatterns).forEach(day => {
-            const patterns = dayPatterns[day];
-            if (patterns.some(pattern => part.includes(pattern))) {
-                partDays++;
-                totalDaysCount++;
-            }
+            const patterns = dayPatterns[day]; if (patterns.some(pattern => part.includes(pattern))) { partDays++; totalDaysCount++; }
         });
-
-        // Count times in this part
-        const timeRegex = /(\d{1,2})(?::(\d{2}))?\s*(am|pm)?(?:\s*[-–]\s*(\d{1,2})(?::(\d{2}))?\s*(am|pm)?)?/g;
-        if (timeRegex.test(part)) {
-            partsWithTimes++;
-            partTimes = 1;
-        }
-
-        // If this part has exactly one day and times, it's potentially day-specific
-        if (partDays === 1 && partTimes === 1) {
-            hasDaySpecific = true;
-        }
+        timeRegex.lastIndex = 0;
+        if (timeRegex.test(part)) { partsWithTimes++; partTimes = 1; }
+        if (partDays === 1 && partTimes === 1) hasDaySpecific = true;
     });
 
-    // If times appear in multiple parts, it's definitely day-specific
-    // If times appear in one part but there are multiple days total, it's shared
-    const isSharedSchedule = partsWithTimes === 1 && totalDaysCount > 1;
+    if (partsWithTimes === 1 && totalDaysCount > 1) hasDaySpecific = false;
 
-    if (isSharedSchedule) {
-        hasDaySpecific = false;
-    }
-
-    // Now parse based on the determination
     if (hasDaySpecific) {
         parts.forEach(part => {
-            let foundDays = [];
-            let timeRanges = [];
-
-            // Find which days this part mentions
-            Object.keys(dayPatterns).forEach(day => {
-                const patterns = dayPatterns[day];
-                if (patterns.some(pattern => part.includes(pattern))) {
-                    foundDays.push(day);
-                }
-            });
-
-            // Parse time ranges in this part
-            const timeRegex = /(\d{1,2})(?::(\d{2}))?\s*(am|pm)?(?:\s*[-–]\s*(\d{1,2})(?::(\d{2}))?\s*(am|pm)?)?/g;
-            let match;
+            const foundDays = [];
+            const timeRanges = [];
+            Object.keys(dayPatterns).forEach(day => { if (dayPatterns[day].some(p => part.includes(p))) foundDays.push(day); });
+            timeRegex.lastIndex = 0; let match;
             while ((match = timeRegex.exec(part)) !== null) {
-                const startHour = parseInt(match[1]);
-                const startMinute = match[2] ? parseInt(match[2]) : 0;
-                const startPeriod = match[3];
-                const endHour = match[4] ? parseInt(match[4]) : null;
-                const endMinute = match[5] ? parseInt(match[5]) : 0;
-                const endPeriod = match[6];
-
-                // Convert start time to 24-hour format
-                let start24 = startHour;
-                if (startPeriod === 'pm' && startHour !== 12) start24 += 12;
-                if (startPeriod === 'am' && startHour === 12) start24 = 0;
-
-                let end24;
-                if (endHour !== null) {
-                    // We have an end time
-                    end24 = endHour;
-                    if (endPeriod === 'pm' && endHour !== 12) end24 += 12;
-                    if (endPeriod === 'am' && endHour === 12) end24 = 0;
-                } else {
-                    // No end time specified, assume 4 hour duration for single times
-                    end24 = start24 + 4;
-                }
-
-                timeRanges.push({
-                    start: start24 * 60 + startMinute,
-                    end: end24 * 60 + (endHour === null ? 0 : endMinute)
-                });
+                const startHour = parseInt(match[1]); const startMinute = match[2] ? parseInt(match[2]) : 0; const startPeriod = match[3];
+                const endHour = match[4] ? parseInt(match[4]) : null; const endMinute = match[5] ? parseInt(match[5]) : 0; const endPeriod = match[6];
+                let start24 = startHour; if (startPeriod === 'pm' && startHour !== 12) start24 += 12; if (startPeriod === 'am' && startHour === 12) start24 = 0;
+                let end24; if (endHour !== null) { end24 = endHour; if (endPeriod === 'pm' && endHour !== 12) end24 += 12; if (endPeriod === 'am' && endHour === 12) end24 = 0; } else { end24 = start24 + 4; }
+                timeRanges.push({ start: start24 * 60 + startMinute, end: end24 * 60 + (endHour === null ? 0 : endMinute) });
             }
-
-            // Store the time ranges for each found day
-            if (timeRanges.length > 0) {
-                foundDays.forEach(day => {
-                    schedule.dayTimes[day] = timeRanges;
-                });
-            }
+            if (timeRanges.length > 0) foundDays.forEach(d => schedule.dayTimes[d] = timeRanges);
         });
     } else {
-        // Shared schedule parsing
         const allDays = [];
         const allTimes = [];
-
-        // Check for each day in the entire text
-        Object.keys(dayPatterns).forEach(day => {
-            const patterns = dayPatterns[day];
-            if (patterns.some(pattern => text.includes(pattern))) {
-                allDays.push(day);
-            }
-        });
-
-        // If no specific days mentioned, assume daily
-        if (allDays.length === 0) {
-            allDays.push('monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday');
-        }
-
-        // Parse all time ranges
-        const timeRegex = /(\d{1,2})(?::(\d{2}))?\s*(am|pm)?(?:\s*[-–]\s*(\d{1,2})(?::(\d{2}))?\s*(am|pm)?)?/g;
-        let match;
+        Object.keys(dayPatterns).forEach(day => { if (dayPatterns[day].some(p => text.includes(p))) allDays.push(day); });
+        if (allDays.length === 0) allDays.push('monday','tuesday','wednesday','thursday','friday','saturday','sunday');
+        timeRegex.lastIndex = 0; let match;
         while ((match = timeRegex.exec(text)) !== null) {
-            const startHour = parseInt(match[1]);
-            const startMinute = match[2] ? parseInt(match[2]) : 0;
-            const startPeriod = match[3];
-            const endHour = match[4] ? parseInt(match[4]) : null;
-            const endMinute = match[5] ? parseInt(match[5]) : 0;
-            const endPeriod = match[6];
-
-            // Convert start time to 24-hour format
-            let start24 = startHour;
-            if (startPeriod === 'pm' && startHour !== 12) start24 += 12;
-            if (startPeriod === 'am' && startHour === 12) start24 = 0;
-
-            let end24;
-            if (endHour !== null) {
-                // We have an end time
-                end24 = endHour;
-                if (endPeriod === 'pm' && endHour !== 12) end24 += 12;
-                if (endPeriod === 'am' && endHour === 12) end24 = 0;
-            } else {
-                // No end time specified, assume 4 hour duration for single times
-                end24 = start24 + 4;
-            }
-
-            allTimes.push({
-                start: start24 * 60 + startMinute,
-                end: end24 * 60 + (endHour === null ? 0 : endMinute)
-            });
+            const startHour = parseInt(match[1]); const startMinute = match[2] ? parseInt(match[2]) : 0; const startPeriod = match[3];
+            const endHour = match[4] ? parseInt(match[4]) : null; const endMinute = match[5] ? parseInt(match[5]) : 0; const endPeriod = match[6];
+            let start24 = startHour; if (startPeriod === 'pm' && startHour !== 12) start24 += 12; if (startPeriod === 'am' && startHour === 12) start24 = 0;
+            let end24; if (endHour !== null) { end24 = endHour; if (endPeriod === 'pm' && endHour !== 12) end24 += 12; if (endPeriod === 'am' && endHour === 12) end24 = 0; } else { end24 = start24 + 4; }
+            allTimes.push({ start: start24 * 60 + startMinute, end: end24 * 60 + (endHour === null ? 0 : endMinute) });
         }
-
-        // Convert to dayTimes format for consistency
-        allDays.forEach(day => {
-            schedule.dayTimes[day] = allTimes;
-        });
+        allDays.forEach(d => schedule.dayTimes[d] = allTimes);
     }
 
-    // If no times found but days were specified, assume it's a complex schedule we can't parse
-    if (Object.keys(schedule.dayTimes).length === 0 || 
-        Object.values(schedule.dayTimes).every(times => times.length === 0)) {
-        if (totalDaysCount > 0 && totalDaysCount < 7) {
-            return { type: 'complex', original: scheduleText };
-        } else {
-            return { type: 'unknown', original: scheduleText };
-        }
+    if (Object.keys(schedule.dayTimes).length === 0 || Object.values(schedule.dayTimes).every(times => times.length === 0)) {
+        if (totalDaysCount > 0 && totalDaysCount < 7) return { type: 'complex', original: scheduleText };
+        return { type: 'unknown', original: scheduleText };
     }
 
     return schedule;
