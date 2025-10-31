@@ -132,7 +132,7 @@ The build process minifies CSS and JavaScript files, reducing total size by ~43%
 
 > **⚠️ Security Warning**: Never commit your API key to the repository! The `YOUR_API_KEY` placeholder is automatically replaced during deployment via GitHub Actions.
 
-## 🌍 Pre-geocoding (Recommended)
+## Pre-geocoding (Recommended)
 
 Pre-geocoding stores latitude/longitude coordinates in `locations.json`, which speeds things up and cuts down on API usage.
 
@@ -179,19 +179,23 @@ For detailed instructions on any contribution type, see [CONTRIBUTING.md](CONTRI
 
 ## Data Format
 
-Each location in `locations.json` follows this structure:
+`locations.json` is a JSON object containing a `locations` array. Each location in the array follows this structure:
 
 ```json
 {
   "name": "Community Food Pantry",
-  "address": "123 Main St, Newnan, GA 30263",
+  "type": "Food Pantry",
+  "address": "123 Main St",
+  "city": "Newnan",
+  "state": "GA",
+  "zip": "30263",
   "county": "Coweta",
-  "type": "Food Bank",
+  "lat": 33.3854297,
+  "lng": -84.8276268,
   "description": "Open Tuesdays and Thursdays, 9am-5pm",
   "schedule": "Tuesdays and Thursdays 9:30am-12pm",
-  "active": true,
-  "lat": 33.3854297,
-  "lng": -84.8276268
+  "website": "https://example.com",
+  "active": true
 }
 ```
 
@@ -200,24 +204,31 @@ Each location in `locations.json` follows this structure:
 | Field | Type | Description |
 |-------|------|-------------|
 | `name` | String | Location name |
-| `address` | String | Full address (street, city, state, ZIP) |
-| `county` | String | County name |
 | `type` | String | Location type (see below) |
+| `address` | String | Street address (without city, state, ZIP) |
+| `city` | String | City name |
+| `state` | String | State abbreviation (e.g., "GA") |
+| `zip` | String | ZIP code |
+| `county` | String | County name |
+| `lat` | Number | Latitude coordinate |
+| `lng` | Number | Longitude coordinate |
+| `description` | String | Brief description of the location |
+| `schedule` | String | Hours/days of operation |
+| `website` | String | Website URL (can be empty string if none) |
 
 ### Optional Fields
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `description` | String | "Take what you need..." | Brief description |
-| `schedule` | String | `null` | Hours/days of operation (e.g., "Tuesdays and Thursdays 9:30am-12pm") |
 | `active` | Boolean | `true` | Whether location is operational |
-| `lat` | Number | `null` | Latitude (recommended to pre-geocode) |
-| `lng` | Number | `null` | Longitude (recommended to pre-geocode) |
 
 ### Location Types
 
 - `Little Free Pantry` - 24/7 accessible food boxes
 - `Food Bank` - Organizations distributing food
+- `Food Pantry` - Places providing food assistance
+- `Food Distribution` - Food distribution services
+- `Mobile Food Pantry` - Mobile food distribution
 - `Soup Kitchen` - Places serving prepared meals
 - `Community Garden` - Shared gardens with available food
 - `Farmers Market` - Markets selling fresh produce

@@ -126,14 +126,31 @@ git checkout -b fix/issue-description
 
 ```
 Feeding-Foundation/
-├── index.html                 # Main map page
-├── add-location.html          # Location submission form
-├── styles.css                 # Main stylesheet
-├── script.js                  # Main JavaScript logic
-├── locations.json             # Location database
-├── add-location.js            # Helper script for adding locations
-├── pregeocode.js             # Geocoding helper
-└── imgs/                     # Images and icons
+├── index.html                      # Main map interface
+├── add-location.html               # Community submission form
+├── styles.css                      # Global styles (modern design)
+├── styles.min.css                  # Minified CSS (generated during build)
+├── script.js                       # Map and UI logic
+├── script.min.js                   # Minified JS (generated during build)
+├── add-location-inline.css         # Inline styles from add-location.html
+├── add-location-inline.min.css     # Minified inline CSS (generated during build)
+├── add-location-inline.js          # Inline JS from add-location.html
+├── add-location-inline.min.js      # Minified inline JS (generated during build)
+├── locations.json                  # Location database
+├── add-location.js                 # Helper: Add locations
+├── pregeocode.js                   # Helper: Batch geocoding
+├── package.json                    # Build dependencies and scripts
+├── .github/
+│   ├── ISSUE_TEMPLATE/
+│   │   ├── add-location.yml        # Location submission template
+│   │   └── config.yml              # Issue template config
+│   └── workflows/
+│       └── deploy.yml              # GitHub Actions deployment
+├── imgs/                           # Images and icons
+├── CONTRIBUTING.md                 # This file
+├── README.md                       # Project overview and setup
+├── CODE_OF_CONDUCT.md              # Community guidelines
+└── LICENSE                         # MIT License
 ```
 
 ### Types of Changes You Can Make
@@ -288,7 +305,7 @@ Feeding-Foundation/
 
 ### Quality Checks for Maintainers
 
-- [ ] Required fields present (`name`, `address`, `county`, `type`)
+- [ ] Required fields present (`name`, `type`, `address`, `city`, `state`, `zip`, `county`, `lat`, `lng`, `description`, `schedule`, `website`)
 - [ ] Address format is complete and accurate
 - [ ] Location type matches our supported categories
 - [ ] No duplicate locations in the same area
@@ -307,7 +324,7 @@ Maintainers can use the included `add-location.js` helper to validate JSON from 
 
 ```bash
 # validate a single JSON object (stringified)
-node add-location.js '{"name":"New Pantry","address":"123 Main St, Town, GA","county":"Coweta","type":"Food Bank","description":"Open Wed 10-2"}'
+node add-location.js '{"name":"New Pantry","type":"Food Pantry","address":"123 Main St","city":"Newnan","state":"GA","zip":"30263","county":"Coweta","lat":33.3854297,"lng":-84.8276268,"description":"Open Wed 10-2","schedule":"Wednesdays 10am-2pm","website":"https://example.com","active":true}'
 ```
 
 If you have a custom script for linting JSON, include it in the repo and mention it here.

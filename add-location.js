@@ -3,7 +3,7 @@
   add-location.js
   - Helper script to add a new location to locations.json
   - Usage: node add-location.js <json-string>
-  - Example: node add-location.js '{"name":"Test Location","address":"123 Main St","county":"Coweta","type":"Food Bank","description":"A test location"}'
+  - Example: node add-location.js '{"name":"Test Location","type":"Food Pantry","address":"123 Main St","city":"Newnan","state":"GA","zip":"30263","county":"Coweta","description":"A test location","schedule":"Wed 10am-2pm","website":""}'
 */
 
 const fs = require('fs');
@@ -16,7 +16,7 @@ function main() {
 
   if (!jsonString) {
     console.error('Usage: node add-location.js <json-string>');
-    console.error('Example: node add-location.js \'{"name":"Test Location","address":"123 Main St","county":"Coweta","type":"Food Bank","description":"A test location"}\'');
+    console.error('Example: node add-location.js \'{"name":"Test Location","type":"Food Pantry","address":"123 Main St","city":"Newnan","state":"GA","zip":"30263","county":"Coweta","description":"A test location","schedule":"Wed 10am-2pm","website":""}\'');
     process.exit(1);
   }
 
@@ -25,7 +25,7 @@ function main() {
     const newLocation = JSON.parse(jsonString);
 
     // Validate required fields
-    const required = ['name', 'address', 'county', 'type'];
+    const required = ['name', 'type', 'address', 'city', 'state', 'zip', 'county', 'description', 'schedule', 'website'];
     const missing = required.filter(field => !newLocation[field]);
     if (missing.length > 0) {
       console.error('Missing required fields:', missing.join(', '));
