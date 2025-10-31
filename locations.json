@@ -426,6 +426,21 @@
       "schedule": "24/7 access",
       "website": "",
       "active": true
+    },
+    {
+      "name": "Bethel Baptist Church of Rocky Mount",
+      "type": "Little Free Pantry",
+      "address": "200 Bethel Church Rd, Luthersville, GA 30251",
+      "city": "Luthersville",
+      "state": "GA",
+      "zip": "30251",
+      "county": "Meriwether",
+      "lat": 33.1720685,
+      "lng": -84.6828015,
+      "description": "Various food items. Restocked on Sunday mornings and throughout week as needed.",
+      "schedule": "24/7",
+      "website": "https://bborm.org",
+      "active": true
     }
   ]
 }
