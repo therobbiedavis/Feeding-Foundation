@@ -441,6 +441,21 @@
       "schedule": "24/7",
       "website": "https://bborm.org",
       "active": true
+    },
+    {
+      "name": "Coweta Force",
+      "type": "Little Free Pantry",
+      "address": "36 Salbide Ave, Newnan, GA 30263",
+      "city": "Newnan",
+      "state": "GA",
+      "zip": "30263",
+      "county": "Coweta",
+      "lat": 33.3719256,
+      "lng": -84.798245,
+      "description": "Take what you need. Leave what you can!",
+      "schedule": "24/7 access",
+      "website": "",
+      "active": true
     }
   ]
 }
